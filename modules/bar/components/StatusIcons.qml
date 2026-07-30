@@ -9,6 +9,7 @@ import Caelestia.Config
 import qs.components
 import qs.services
 import qs.utils
+import qs.modules.nexus
 
 StyledRect {
     id: root
@@ -253,6 +254,38 @@ StyledRect {
                 }
                 color: !UPower.onBattery || UPower.displayDevice.percentage > 0.2 ? root.colour : Colours.palette.m3error
                 fill: 1
+            }
+        }
+
+        // Settings icon (oeffnet das Nexus/Settings-Fenster)
+        MaterialIcon {
+            Layout.alignment: Qt.AlignHCenter
+            text: "settings"
+            color: root.colour
+
+            MouseArea {
+                anchors.fill: parent
+                anchors.margins: -Tokens.padding.small
+                cursorShape: Qt.PointingHandCursor
+                onClicked: WindowFactory.create()
+            }
+        }
+
+        // Help icon (toggelt das Keyboard-Shortcuts-Cheatsheet)
+        MaterialIcon {
+            Layout.alignment: Qt.AlignHCenter
+            text: "help"
+            color: root.colour
+
+            MouseArea {
+                anchors.fill: parent
+                anchors.margins: -Tokens.padding.small
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    const s = ShellState.forActive();
+                    if (s)
+                        s.cheatsheet = !s.cheatsheet;
+                }
             }
         }
     }

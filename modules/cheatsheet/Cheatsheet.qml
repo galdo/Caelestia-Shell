@@ -7,8 +7,8 @@ import Caelestia.Config
 import qs.components
 import qs.services
 
-// Cheatsheet-Overlay: zentrierte Uebersicht der aktiven Hyprland-Keybinds.
-// Sichtbar an screenState.cheatsheet gebunden; laedt Binds beim Oeffnen neu.
+// Cheatsheet-Overlay: zentrierte Uebersicht der wichtigsten Shortcuts (kuratiert).
+// Sichtbar an screenState.cheatsheet gebunden.
 // Schliesst auf Esc oder Klick ausserhalb der Karte.
 Item {
     id: root
@@ -27,12 +27,6 @@ Item {
     }
     Behavior on animOpacity {
         Anim {}
-    }
-
-    // Beim Oeffnen Binds neu laden
-    onShouldBeActiveChanged: {
-        if (shouldBeActive)
-            Keybinds.reload();
     }
 
     // Abdunkelnder Hintergrund; Klick schliesst
@@ -93,44 +87,58 @@ Item {
                     font: Tokens.font.title.small
                     color: Colours.palette.m3onSurface
                 }
-                StyledText {
-                    text: Keybinds.loading ? Tr.t("Loading...") : ""
-                    color: Colours.palette.m3onSurfaceVariant
-                }
             }
 
             ListView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
-                model: Keybinds.binds
-                spacing: Tokens.spacing.small / 2
+                model: Keybinds.groups
+                spacing: Tokens.spacing.medium
 
-                delegate: RowLayout {
+                delegate: ColumnLayout {
                     required property var modelData
                     width: ListView.view.width
-                    spacing: Tokens.spacing.medium
+                    spacing: Tokens.spacing.small / 2
 
-                    StyledRect {
-                        radius: Tokens.rounding.small
-                        color: Colours.palette.m3surfaceContainerHighest
-                        implicitWidth: keyText.implicitWidth + Tokens.padding.small * 2
-                        implicitHeight: keyText.implicitHeight + Tokens.padding.small
-
-                        StyledText {
-                            id: keyText
-                            anchors.centerIn: parent
-                            text: modelData.key
-                            color: Colours.palette.m3onSurface
-                            font: Tokens.font.body.small
-                        }
+                    // Gruppentitel
+                    StyledText {
+                        text: modelData.title
+                        font: Tokens.font.body.large
+                        color: Colours.palette.m3primary
                     }
 
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: modelData.action
-                        color: Colours.palette.m3onSurfaceVariant
-                        elide: Text.ElideRight
+                    // Eintraege der Gruppe
+                    Repeater {
+                        model: modelData.items
+
+                        RowLayout {
+                            required property var modelData
+                            Layout.fillWidth: true
+                            spacing: Tokens.spacing.medium
+
+                            StyledRect {
+                                radius: Tokens.rounding.small
+                                color: Colours.palette.m3surfaceContainerHighest
+                                implicitWidth: keyText.implicitWidth + Tokens.padding.small * 2
+                                implicitHeight: keyText.implicitHeight + Tokens.padding.small
+
+                                StyledText {
+                                    id: keyText
+                                    anchors.centerIn: parent
+                                    text: modelData.key
+                                    color: Colours.palette.m3onSurface
+                                    font: Tokens.font.mono.small
+                                }
+                            }
+
+                            StyledText {
+                                Layout.fillWidth: true
+                                text: modelData.action
+                                color: Colours.palette.m3onSurfaceVariant
+                                elide: Text.ElideRight
+                            }
+                        }
                     }
                 }
             }

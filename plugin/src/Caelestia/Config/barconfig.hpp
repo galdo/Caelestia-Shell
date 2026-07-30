@@ -148,7 +148,6 @@ class BarConfig : public ConfigObject {
             vmap({ { u"id"_s, u"clock"_s }, { u"enabled"_s, true } }),
             vmap({ { u"id"_s, u"statusIcons"_s }, { u"enabled"_s, true } }),
             vmap({ { u"id"_s, u"power"_s }, { u"enabled"_s, true } }),
-            vmap({ { u"id"_s, u"help"_s }, { u"enabled"_s, true } }),
         })
     CONFIG_PROPERTY(QStringList, excludedScreens)
 

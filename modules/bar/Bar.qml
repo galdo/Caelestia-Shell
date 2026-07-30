@@ -180,15 +180,6 @@ ColumnLayout {
                     }
                 }
             }
-            DelegateChoice {
-                roleValue: "help"
-                delegate: EntryWrapper {
-                    Help {
-                        objectName: "taskbarHelpButton"
-                        screenState: root.screenState
-                    }
-                }
-            }
         }
     }
 
