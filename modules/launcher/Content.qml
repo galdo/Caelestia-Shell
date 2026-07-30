@@ -21,11 +21,12 @@ Item {
     implicitWidth: listWrapper.width + padding * 2
     implicitHeight: search.height + listWrapper.height + padding + search.anchors.bottomMargin
 
-    // Hintergrund (ersetzt den frueheren launcherBg-Blob): Bar-Flaeche + abgerundete Ecken.
+    // Hintergrund (ersetzt den frueheren launcherBg-Blob): identisch zur Bar-Flaeche
+    // (m3surface inkl. Transparenz) + abgerundete Ecken.
     StyledRect {
         anchors.fill: parent
         radius: root.rounding
-        color: Colours.tPalette.m3surfaceContainer
+        color: Colours.tPalette.m3surface
     }
 
     Item {

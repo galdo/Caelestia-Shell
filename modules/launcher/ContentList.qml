@@ -112,8 +112,10 @@ Item {
     Row {
         id: empty
 
-        opacity: root.currentList?.count === 0 ? 1 : 0
-        scale: root.currentList?.count === 0 ? 1 : 0.5
+        // Nur bei nicht-leerer Suche die "Keine Ergebnisse"-Meldung zeigen.
+        readonly property bool hasQuery: (root.search?.text ?? "").trim().length > 0
+        opacity: hasQuery && root.currentList?.count === 0 ? 1 : 0
+        scale: hasQuery && root.currentList?.count === 0 ? 1 : 0.5
 
         spacing: Tokens.spacing.medium
         padding: Tokens.padding.large

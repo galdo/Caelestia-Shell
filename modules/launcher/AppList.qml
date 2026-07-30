@@ -40,6 +40,9 @@ StyledListView {
     }
 
     function resultsForText(text: string): var {
+        // Leere Suche -> keine Apps anzeigen (erst bei Eingabe filtern).
+        if (!text || text.trim().length === 0)
+            return [];
         switch (stateForText(text)) {
         case "actions":
             return Actions.query(text);
