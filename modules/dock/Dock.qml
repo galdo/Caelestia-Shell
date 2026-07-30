@@ -66,6 +66,23 @@ Variants {
         implicitHeight: dockPill.implicitHeight + slideRoom
         readonly property int slideRoom: dockPill.implicitHeight + Tokens.padding.large * 2
 
+        // Klickbar/hoverbar nur: die Pille + ein duenner Streifen unter der Pille
+        // (Reveal-Trigger, mittig - kollidiert nicht mit der linken Bar).
+        // Rest klick-transparent -> Bar-Buttons darunter erreichbar.
+        mask: Region {
+            Region {
+                item: dockPill
+            }
+            Region {
+                x: (win.width - revealWidth) / 2
+                y: win.height - revealZone
+                width: revealWidth
+                height: revealZone
+            }
+        }
+        readonly property int revealZone: Tokens.padding.small
+        readonly property int revealWidth: Math.max(dockPill.implicitWidth, 200)
+
         // Slide + Fade
         property real offsetScale: revealed ? 0 : 1
         Behavior on offsetScale {
