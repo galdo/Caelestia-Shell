@@ -12,6 +12,7 @@ import qs.components
 import qs.components.containers
 import qs.services
 import qs.modules.bar
+import qs.modules.bar.components
 
 StyledWindow {
     id: root
@@ -181,7 +182,8 @@ StyledWindow {
             id: dockBg
 
             readonly property int iconW: Tokens.sizes.bar.innerWidth
-            readonly property int dockCount: GlobalConfig.dock.pinned?.length ?? 0
+            // Icon-Anzahl vom Dock-Overlay (pinned + laufende) -> Blob deckt exakt alle Icons.
+            readonly property int dockCount: dockIcons.itemCount
             readonly property int barPad: Tokens.padding.large
             readonly property int dockHeight: dockCount > 0
                 ? dockCount * iconW + (dockCount - 1) * (Tokens.spacing.medium / 2) + Tokens.padding.medium * 2
@@ -201,6 +203,15 @@ StyledWindow {
             topRightRadius: GlobalConfig.dock.position === "top" ? root.borderRounding : Tokens.rounding.large
             bottomRightRadius: GlobalConfig.dock.position === "top" ? Tokens.rounding.large : root.borderRounding
         }
+
+        // Dock-Icons als Overlay, deckungsgleich mit dem Blob (kein Bar-Fluss -> keine Verschiebung).
+        Dock {
+            id: dockIcons
+
+            anchors.fill: dockBg
+            visible: dockBg.visible
+        }
+
 
         PanelBg {
             id: dashBg

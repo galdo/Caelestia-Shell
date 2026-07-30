@@ -65,10 +65,6 @@ Item {
     implicitWidth: Tokens.sizes.bar.innerWidth
     implicitHeight: iconColumn.implicitHeight + Tokens.padding.medium * 2
 
-    // Im Bar-ColumnLayout Platz beanspruchen (sonst 0-Groesse -> Icons unsichtbar).
-    Layout.preferredWidth: implicitWidth
-    Layout.preferredHeight: implicitHeight
-
     // Ist eine App (per class) gerade offen?
     function isRunning(entryId) {
         try {

@@ -103,13 +103,6 @@ ColumnLayout {
 
     spacing: Tokens.spacing.medium
 
-    // Dock oben (wenn position = "top") — direkt nach dem Logo, oben-links.
-    Dock {
-        Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: root.vPadding
-        visible: GlobalConfig.dock.enabled && GlobalConfig.dock.position === "top"
-    }
-
     Repeater {
         id: repeater
 
@@ -188,23 +181,6 @@ ColumnLayout {
                 }
             }
         }
-    }
-
-    // Spacer, der das untere Dock nach ganz unten drueckt (nur bei position = "bottom").
-    // Transparentes Item; fuellt den Restplatz nur wenn Dock unten aktiv ist.
-    Item {
-        Layout.fillHeight: GlobalConfig.dock.enabled && GlobalConfig.dock.position === "bottom"
-        implicitWidth: 1
-        implicitHeight: 0
-    }
-
-    // Dock unten (wenn position = "bottom") — zieht sich um die untere-linke Ecke.
-    Dock {
-        id: bottomDock
-        objectName: "dock"
-        Layout.alignment: Qt.AlignHCenter
-        Layout.bottomMargin: root.vPadding
-        visible: GlobalConfig.dock.enabled && GlobalConfig.dock.position === "bottom"
     }
 
     component EntryWrapper: Item {
