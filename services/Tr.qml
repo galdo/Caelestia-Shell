@@ -646,6 +646,19 @@ Singleton {
         "Media & volume": "Medien & Lautstärke",
         "Volume up": "Lauter",
         "Volume down": "Leiser",
-        "Mute": "Stummschalten"
+        "Mute": "Stummschalten",
+        "Dock": "Dock",
+        "Pinned apps, position": "Angeheftete Apps, Position",
+        "Enable dock": "Dock aktivieren",
+        "Show running apps": "Laufende Apps anzeigen",
+        "Also show running apps that are not pinned": "Auch laufende Apps anzeigen, die nicht angeheftet sind",
+        "Position": "Position",
+        "Where the dock attaches to the bar": "Wo das Dock an der Leiste andockt",
+        "Bottom": "Unten",
+        "Top": "Oben",
+        "Pinned apps": "Angeheftete Apps",
+        "Add app": "App hinzufügen",
+        "Select an app to pin": "App zum Anheften auswählen",
+        "No pinned apps yet": "Noch keine Apps angeheftet"
     })
 }

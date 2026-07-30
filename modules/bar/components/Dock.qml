@@ -1,0 +1,124 @@
+pragma ComponentBehavior: Bound
+
+import QtQuick
+import QtQuick.Layouts
+import Quickshell
+import Quickshell.Widgets
+import Caelestia.Config
+import qs.components
+import qs.services
+import qs.utils
+import qs.modules.launcher.services
+
+// Dock: angeheftete + laufende Apps als vertikale Icon-Spalte in der (linken) Bar.
+// Fuegt sich in die Bar-Spalte ein (nicht schwebend). Position (oben/unten) wird
+// ueber die Reihenfolge in Bar.qml gesteuert.
+StyledRect {
+    id: root
+
+    property color colour: Colours.palette.m3secondary
+
+    // Angeheftete App-IDs -> DesktopEntry (heuristisch aufgeloest, null gefiltert)
+    readonly property var pinnedEntries: (Config.dock.pinned ?? []).map(id => DesktopEntries.heuristicLookup(id)).filter(e => e)
+
+    // Laufende Fenster-Klassen (unique), die NICHT bereits angeheftet sind
+    readonly property var pinnedClasses: root.pinnedEntries.map(e => (e.id ?? "").toLowerCase())
+    readonly property var runningEntries: {
+        if (!Config.dock.showRunning)
+            return [];
+        const seen = {};
+        const out = [];
+        for (const t of Hypr.toplevels.values) {
+            const cls = (t.lastIpcObject?.class ?? "").toLowerCase();
+            if (!cls || seen[cls])
+                continue;
+            seen[cls] = true;
+            if (root.pinnedClasses.includes(cls))
+                continue;
+            const entry = DesktopEntries.heuristicLookup(cls);
+            if (entry)
+                out.push(entry);
+        }
+        return out;
+    }
+
+    readonly property var allEntries: root.pinnedEntries.concat(root.runningEntries)
+
+    visible: Config.dock.enabled && root.allEntries.length > 0
+
+    color: Colours.tPalette.m3surfaceContainer
+    radius: Tokens.rounding.full
+    clip: true
+
+    implicitWidth: Tokens.sizes.bar.innerWidth
+    implicitHeight: iconColumn.implicitHeight + Tokens.padding.medium * 2
+
+    // Ist eine App (per class) gerade offen?
+    function isRunning(entryId) {
+        const cls = (entryId ?? "").toLowerCase();
+        return Hypr.toplevels.values.some(t => (t.lastIpcObject?.class ?? "").toLowerCase() === cls);
+    }
+
+    // Klick: laufendes Fenster fokussieren, sonst App starten.
+    function activate(entry) {
+        const cls = (entry.id ?? "").toLowerCase();
+        const t = Hypr.toplevels.values.find(w => (w.lastIpcObject?.class ?? "").toLowerCase() === cls);
+        if (t) {
+            const addr = t.address ?? t.lastIpcObject?.address;
+            if (addr)
+                Hypr.dispatch(Hypr.usingLua ? `hl.dsp.focus({ address = "0x${addr}" })` : `focuswindow address:0x${addr}`);
+        } else {
+            Apps.launch(entry);
+        }
+    }
+
+    ColumnLayout {
+        id: iconColumn
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+
+        spacing: Tokens.spacing.medium / 2
+
+        Repeater {
+            model: root.allEntries
+
+            Item {
+                id: appItem
+
+                required property var modelData
+
+                readonly property bool running: root.isRunning(modelData.id)
+
+                Layout.alignment: Qt.AlignHCenter
+                implicitWidth: Tokens.sizes.bar.innerWidth
+                implicitHeight: implicitWidth
+
+                StateLayer {
+                    anchors.fill: parent
+                    radius: Tokens.rounding.full
+                    onClicked: root.activate(appItem.modelData)
+                }
+
+                IconImage {
+                    anchors.centerIn: parent
+                    asynchronous: true
+                    source: Quickshell.iconPath(appItem.modelData?.icon, "image-missing")
+                    implicitSize: parent.implicitWidth * 0.7
+                }
+
+                // Kleiner Indikator fuer laufende Apps
+                StyledRect {
+                    visible: appItem.running
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    implicitWidth: Tokens.padding.small / 2
+                    implicitHeight: parent.implicitHeight * 0.4
+                    radius: Tokens.rounding.full
+                    color: root.colour
+                }
+            }
+        }
+    }
+}

@@ -142,6 +142,14 @@ QtObject {
             }
         },
         Component {
+            // Dock
+            StackPage {
+                Component {
+                    DockPage {}
+                }
+            }
+        },
+        Component {
             // Apps
             StackPage {
                 Component {

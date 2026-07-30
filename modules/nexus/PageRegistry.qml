@@ -65,6 +65,12 @@ QtObject {
             category: "shell"
         },
         {
+            label: Tr.t("Dock"),
+            icon: "apps",
+            description: Tr.t("Pinned apps, position"),
+            category: "shell"
+        },
+        {
             label: Tr.t("Apps"),
             icon: "apps",
             description: Tr.t("Default apps, favourites, hidden apps"),

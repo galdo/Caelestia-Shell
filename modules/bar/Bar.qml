@@ -103,6 +103,13 @@ ColumnLayout {
 
     spacing: Tokens.spacing.medium
 
+    // Dock oben (wenn position = "top") — zieht sich um die obere-linke Ecke.
+    Dock {
+        Layout.alignment: Qt.AlignHCenter
+        Layout.topMargin: root.vPadding
+        visible: Config.dock.enabled && Config.dock.position === "top"
+    }
+
     Repeater {
         id: repeater
 
@@ -181,6 +188,13 @@ ColumnLayout {
                 }
             }
         }
+    }
+
+    // Dock unten (wenn position = "bottom") — zieht sich um die untere-linke Ecke.
+    Dock {
+        Layout.alignment: Qt.AlignHCenter
+        Layout.bottomMargin: root.vPadding
+        visible: Config.dock.enabled && Config.dock.position === "bottom"
     }
 
     component EntryWrapper: Item {
