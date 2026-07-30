@@ -12,6 +12,7 @@ import qs.modules.sidebar as Sidebar
 import qs.modules.utilities as Utilities
 import qs.modules.bar.popouts as BarPopouts
 import qs.modules.utilities.toasts as Toasts
+import qs.modules.cheatsheet as Cheatsheet
 
 Item {
     id: root
@@ -151,5 +152,13 @@ Item {
         anchors.bottom: utilities.top
         anchors.right: parent.right
         anchors.topMargin: -notifications.anchors.topMargin
+    }
+
+    Cheatsheet.Cheatsheet {
+        id: cheatsheet
+
+        screenState: root.screenState
+
+        anchors.fill: parent
     }
 }

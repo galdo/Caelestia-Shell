@@ -614,6 +614,14 @@ Singleton {
         "WPA/WPA2/WPA3 Personal": "WPA/WPA2/WPA3 Personal",
         "XKB supports only 4 layouts at a time": "XKB unterstützt nur 4 Layouts gleichzeitig",
         "Xwayland: %1": "Xwayland: %1",
-        "\"%1\" selected": "„%1“ ausgewählt"
+        "\"%1\" selected": "„%1“ ausgewählt",
+        "Keyboard shortcuts": "Tastaturkürzel",
+        "Toggle all panels": "Alle Panels umschalten",
+        "Clear notifications": "Benachrichtigungen löschen",
+        "Lock": "Sperren",
+        "Screenshot": "Bildschirmfoto",
+        "Play/Pause": "Wiedergabe/Pause",
+        "Next track": "Nächster Titel",
+        "Previous track": "Vorheriger Titel"
     })
 }
