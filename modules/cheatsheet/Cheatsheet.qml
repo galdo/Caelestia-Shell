@@ -23,6 +23,13 @@ Item {
     anchors.fill: parent
     visible: animOpacity > 0
 
+    // Fokus aktiv holen, sobald das Overlay oeffnet (deklaratives focus: greift nicht
+    // zuverlaessig, wenn das Item schon existiert) -> Tastatur (Pfeile/PageUp/Down/Esc).
+    onShouldBeActiveChanged: {
+        if (shouldBeActive)
+            shortcutList.forceActiveFocus();
+    }
+
     Behavior on animScale {
         Anim {}
     }
@@ -57,9 +64,13 @@ Item {
         implicitWidth: Math.min(root.width * 0.6, 720)
         implicitHeight: Math.min(root.height * 0.75, 640)
 
-        // Klicks auf der Karte nicht an den schliessenden Hintergrund durchreichen
+        // Klicks auf der Karte nicht an den schliessenden Hintergrund durchreichen.
+        // WICHTIG: nur Maustasten abfangen, KEINE Wheel-Events schlucken -> sonst
+        // erreicht das Mausrad die ListView darunter nicht (Scroll tot).
         MouseArea {
             anchors.fill: parent
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            onWheel: wheel => wheel.accepted = false
         }
 
         ColumnLayout {
