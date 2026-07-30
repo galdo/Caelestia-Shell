@@ -12,40 +12,55 @@ import qs.services
 import qs.utils
 import qs.modules.nexus.common
 
-// Bildschirm-Einstellungen: Aufloesung + Anordnung pro Monitor.
-// Setzt Werte zur Laufzeit (hyprctl/hl.monitor) UND schreibt sie persistent in
-// ~/.config/caelestia/hypr-user.lua, damit sie den Neustart ueberleben.
+// Bildschirm-Einstellungen: Aufloesung + Skalierung des (primaeren) Monitors.
+// Setzt Werte zur Laufzeit (hyprctl monitor) UND schreibt sie persistent in
+// ~/.config/caelestia/hypr-user.lua (hl.monitor), damit sie den Neustart ueberleben.
+//
+// Auflösungsauswahl ueber Variants -> .instances (erprobtes Muster wie DockPage
+// "Add app"; dynamisches createObject in SelectRow funktioniert NICHT zuverlaessig).
 PageBase {
     id: root
 
     title: Tr.t("Display")
 
-    // Live-Monitorliste aus Quickshell.Hyprland (via Hypr-Service).
-    readonly property var monitors: Hypr.monitors?.values ?? []
+    // Primaerer Monitor (in der VM genau einer): der fokussierte, sonst der erste.
+    readonly property var mon: {
+        const list = Hypr.monitors?.values ?? [];
+        return Hypr.focusedMonitor ?? list[0] ?? null;
+    }
+    readonly property var io: mon?.lastIpcObject ?? ({})
+    readonly property string monName: mon?.name ?? (io.name ?? "")
 
-    // Zerlegt einen availableModes-Eintrag "1920x1080@60.00Hz" in { res, hz, label }.
-    function parseMode(modeStr: string): var {
-        const m = String(modeStr).match(/^(\d+x\d+)@([\d.]+)Hz$/);
-        if (!m)
-            return null;
-        const hz = parseFloat(m[2]);
-        return {
-            key: modeStr,
-            res: m[1],
-            hz: hz,
-            // Anzeige: "1920x1080 @ 60 Hz" (ganze Zahl wenn moeglich)
-            label: `${m[1]} @ ${Math.round(hz * 100) / 100} Hz`
-        };
+    // Verfuegbare Modi als "WxH@R.RRRHz"-Strings (aus lastIpcObject.availableModes).
+    // Dedupliziert auf "WxH" (nur hoechste Refreshrate je Aufloesung), damit die
+    // Liste kurz bleibt. Absteigend nach Flaeche sortiert.
+    readonly property var resList: {
+        const raw = io.availableModes ?? [];
+        const best = {};  // "WxH" -> {w,h,hz,mode}
+        for (const s of raw) {
+            const m = String(s).match(/^(\d+)x(\d+)@([\d.]+)Hz$/);
+            if (!m)
+                continue;
+            const w = parseInt(m[1], 10);
+            const h = parseInt(m[2], 10);
+            const hz = parseFloat(m[3]);
+            const key = `${w}x${h}`;
+            if (!best[key] || hz > best[key].hz)
+                best[key] = { w, h, hz, res: key, mode: s };
+        }
+        return Object.values(best).sort((a, b) => (b.w * b.h) - (a.w * a.h));
     }
 
-    // Aktueller Modus eines Monitors als "WxH@R.RRRHz" (fuer hl.monitor mode = ...).
-    function currentMode(mon: var): string {
-        const io = mon?.lastIpcObject ?? {};
+    // Aktuelle Auflösung als "WxH" (fuer active-Vorauswahl).
+    readonly property string currentRes: {
         const w = io.width ?? mon?.width ?? 0;
         const h = io.height ?? mon?.height ?? 0;
-        const hz = io.refreshRate ?? 0;
-        return `${w}x${h}@${hz.toFixed(5)}Hz`;
+        return `${w}x${h}`;
     }
+
+    // Gewaehlte Werte (Default: aktuell).
+    property string selectedRes: currentRes
+    property real selectedScale: io.scale ?? mon?.scale ?? 1
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -53,319 +68,116 @@ PageBase {
         width: root.cappedWidth
         spacing: Tokens.spacing.extraSmall / 2
 
-        // Ein Abschnitt pro Monitor.
-        Repeater {
-            model: root.monitors
+        // MenuItems fuer die Auflösungs-SelectRow aus den Modi erzeugen.
+        // Variants ist kein visuelles Item -> landet in 'data' (wie in DockPage).
+        Variants {
+            id: resVariants
 
-            ColumnLayout {
-                id: monSection
+            model: root.resList
 
+            MenuItem {
                 required property var modelData
-                required property int index
-
-                readonly property var mon: modelData
-                readonly property var io: mon?.lastIpcObject ?? ({})
-                readonly property string monName: mon?.name ?? (io.name ?? "?")
-
-                // Verfuegbare Modi (aus lastIpcObject.availableModes; QML-API hat kein
-                // dediziertes availableModes-Property -> raw ipc object nutzen).
-                readonly property var modes: {
-                    const raw = io.availableModes ?? [];
-                    const out = [];
-                    for (const s of raw) {
-                        const p = root.parseMode(s);
-                        if (p)
-                            out.push(p);
-                    }
-                    // Falls Hyprland (noch) keine Modi liefert, wenigstens den
-                    // aktuellen Modus als Auswahl anbieten.
-                    if (out.length === 0) {
-                        const cur = root.parseMode(root.currentMode(mon));
-                        if (cur)
-                            out.push(cur);
-                    }
-                    return out;
-                }
-
-                // Ausgewaehlter Modus (Default: aktueller Modus des Monitors).
-                property string selectedMode: root.currentMode(mon)
-                // Ausgewaehlte Skalierung.
-                property real selectedScale: io.scale ?? mon?.scale ?? 1
-                // Anordnung: Bezugsmonitor + Richtung (nur Multi-Monitor).
-                // Werden von den arrange-SelectRows unten gesetzt, damit
-                // applyMonitor() sie am Section-Objekt lesen kann.
-                property string refMonitorName: ""
-                property string placementDir: "right"
-
-                Layout.fillWidth: true
-                spacing: Tokens.spacing.extraSmall / 2
-
-                SectionHeader {
-                    first: monSection.index === 0
-                    text: monSection.monName
-                }
-
-                // Aktueller Zustand (Info).
-                InfoRow {
-                    icon: "monitor"
-                    label: Tr.t("Current mode")
-                    value: {
-                        const io = monSection.io;
-                        const w = io.width ?? monSection.mon?.width ?? 0;
-                        const h = io.height ?? monSection.mon?.height ?? 0;
-                        const hz = io.refreshRate ?? 0;
-                        return `${w}x${h} @ ${Math.round(hz * 100) / 100} Hz`;
-                    }
-                }
-
-                InfoRow {
-                    icon: "aspect_ratio"
-                    label: Tr.t("Position")
-                    value: {
-                        const io = monSection.io;
-                        const x = io.x ?? monSection.mon?.x ?? 0;
-                        const y = io.y ?? monSection.mon?.y ?? 0;
-                        return `${x}, ${y}`;
-                    }
-                }
-
-                // Aufloesung waehlen (Dropdown).
-                SelectRow {
-                    id: modeSelect
-
-                    // MenuItems dynamisch aus den verfuegbaren Modi. objectName traegt
-                    // den stabilen Schluessel "WxH@R.RRRHz" (Custom-Props gehen im
-                    // MenuItem-Signal verloren).
-                    readonly property list<MenuItem> modeItems: {
-                        const items = [];
-                        for (const mode of monSection.modes) {
-                            const it = root.modeItemComp.createObject(modeSelect, {
-                                objectName: mode.key,
-                                text: mode.label
-                            });
-                            if (it)
-                                items.push(it);
-                        }
-                        return items;
-                    }
-
-                    label: Tr.t("Resolution")
-                    subtext: Tr.t("Refresh rate is chosen with the mode")
-                    menuItems: modeItems
-                    active: modeItems.find(i => i.objectName === monSection.selectedMode) ?? modeItems[0] ?? null
-                    onSelected: item => monSection.selectedMode = item.objectName
-                }
-
-                // Skalierung.
-                StepperRow {
-                    label: Tr.t("Scale")
-                    subtext: Tr.t("Display scaling factor (percent)")
-                    from: 50
-                    to: 300
-                    stepSize: 25
-                    value: Math.round(monSection.selectedScale * 100)
-                    onMoved: value => monSection.selectedScale = value / 100
-                }
-
-                // Anordnung: nur bei mehreren Monitoren sinnvoll.
-                // Bezugsmonitor + relative Lage. Ergebnis wird beim Anwenden in eine
-                // Positionsangabe fuer hl.monitor uebersetzt.
-                SelectRow {
-                    id: arrangeRef
-
-                    visible: root.monitors.length > 1
-
-                    readonly property list<MenuItem> refItems: {
-                        const items = [];
-                        for (const other of root.monitors) {
-                            const oname = other?.name ?? "?";
-                            if (oname === monSection.monName)
-                                continue;
-                            const it = root.refItemComp.createObject(arrangeRef, {
-                                objectName: oname,
-                                text: oname
-                            });
-                            if (it)
-                                items.push(it);
-                        }
-                        return items;
-                    }
-
-                    property string refMonitor: refItems[0]?.objectName ?? ""
-
-                    // Default fuer die Section setzen, sobald bekannt.
-                    onRefMonitorChanged: monSection.refMonitorName = refMonitor
-                    Component.onCompleted: monSection.refMonitorName = refMonitor
-
-                    label: Tr.t("Relative to")
-                    subtext: Tr.t("Reference monitor for arrangement")
-                    menuItems: refItems
-                    active: refItems.find(i => i.objectName === refMonitor) ?? refItems[0] ?? null
-                    onSelected: item => {
-                        refMonitor = item.objectName;
-                        monSection.refMonitorName = item.objectName;
-                    }
-                }
-
-                SelectRow {
-                    id: arrangeDir
-
-                    visible: root.monitors.length > 1
-
-                    readonly property list<MenuItem> dirItems: [
-                        rightOfItem,
-                        leftOfItem,
-                        aboveItem,
-                        belowItem
-                    ]
-
-                    property string direction: "right"
-
-                    onDirectionChanged: monSection.placementDir = direction
-
-                    label: Tr.t("Placement")
-                    subtext: Tr.t("Where this monitor sits")
-                    menuItems: dirItems
-                    active: dirItems.find(i => i.objectName === direction) ?? dirItems[0]
-                    onSelected: item => {
-                        direction = item.objectName;
-                        monSection.placementDir = item.objectName;
-                    }
-
-                    MenuItem {
-                        id: rightOfItem
-                        objectName: "right"
-                        text: Tr.t("Right of reference")
-                    }
-                    MenuItem {
-                        id: leftOfItem
-                        objectName: "left"
-                        text: Tr.t("Left of reference")
-                    }
-                    MenuItem {
-                        id: aboveItem
-                        objectName: "above"
-                        text: Tr.t("Above reference")
-                    }
-                    MenuItem {
-                        id: belowItem
-                        objectName: "below"
-                        text: Tr.t("Below reference")
-                    }
-                }
-
-                // Anwenden-Button.
-                Item {
-                    Layout.fillWidth: true
-                    implicitHeight: applyBtn.implicitHeight + Tokens.padding.medium
-
-                    IconTextButton {
-                        id: applyBtn
-
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        horizontalPadding: Tokens.padding.extraLarge
-                        verticalPadding: Tokens.padding.medium
-                        icon: "check"
-                        text: Tr.t("Apply")
-                        onClicked: root.applyMonitor(monSection)
-                    }
-                }
+                // objectName traegt den stabilen Schluessel "WxH".
+                objectName: modelData.res
+                text: `${modelData.res}  ·  ${Math.round(modelData.hz)} Hz`
             }
         }
 
-        // Hinweis, wenn keine Monitore erkannt wurden.
+        // Kein Monitor?
         StyledText {
             Layout.fillWidth: true
             Layout.topMargin: Tokens.padding.medium
-            visible: root.monitors.length === 0
+            visible: !root.mon
             horizontalAlignment: Text.AlignHCenter
             text: Tr.t("No monitors detected")
             color: Colours.palette.m3outlineVariant
         }
-    }
 
-    // MenuItem-Fabriken (dynamische Modi/Referenzen).
-    // WICHTIG: Component ist kein visuelles Item -> als Property deklarieren, nicht als
-    // direktes Kind von PageBase (sonst "Cannot assign Component to QQuickItem*").
-    // MenuItem hat 'text' bereits; 'objectName' ist Standard-QML -> NICHT neu als
-    // required deklarieren (das erzeugt eine Warn-Schleife "text was not initialized"
-    // -> Dauer-Render -> hohe CPU). createObject setzt die vorhandenen Properties.
-    readonly property Component modeItemComp: Component {
-        MenuItem {}
-    }
-    readonly property Component refItemComp: Component {
-        MenuItem {}
-    }
-
-    // Berechnet die Position (Pixel "XxY") aus Bezugsmonitor + Richtung.
-    // Wendet Aufloesung/Position/Skalierung an: zur Laufzeit + persistent in die
-    // hypr-user.lua.
-    function applyMonitor(section: var): void {
-        const name = section.monName;
-        const mode = section.selectedMode; // "WxH@R.RRRHz"
-        const scale = section.selectedScale;
-
-        // Position bestimmen.
-        let position;
-        if (root.monitors.length > 1) {
-            position = resolvePosition(section);
-        } else {
-            const io = section.io;
-            position = `${io.x ?? section.mon?.x ?? 0}x${io.y ?? section.mon?.y ?? 0}`;
+        // Monitor-Infos
+        SectionHeader {
+            first: true
+            text: root.monName
+            visible: !!root.mon
         }
 
-        // 1) Laufzeit: hyprctl keyword-Dispatch (funktioniert in Lua- und
-        // klassischer Config identisch).
+        InfoRow {
+            visible: !!root.mon
+            icon: "monitor"
+            label: Tr.t("Current mode")
+            value: {
+                const w = root.io.width ?? 0;
+                const h = root.io.height ?? 0;
+                const hz = root.io.refreshRate ?? 0;
+                return `${w}x${h} @ ${Math.round(hz)} Hz`;
+            }
+        }
+
+        // Auflösung waehlen
+        SelectRow {
+            visible: !!root.mon
+            label: Tr.t("Resolution")
+            subtext: Tr.t("Refresh rate is chosen with the mode")
+            menuItems: resVariants.instances
+            active: resVariants.instances.find(i => i.objectName === root.selectedRes) ?? null
+            onSelected: item => root.selectedRes = item.objectName
+        }
+
+        // Skalierung
+        StepperRow {
+            visible: !!root.mon
+            label: Tr.t("Scale")
+            subtext: Tr.t("Display scaling factor (percent)")
+            from: 50
+            to: 300
+            stepSize: 25
+            value: Math.round(root.selectedScale * 100)
+            onMoved: value => root.selectedScale = value / 100
+        }
+
+        // Anwenden
+        Item {
+            visible: !!root.mon
+            Layout.fillWidth: true
+            implicitHeight: applyBtn.implicitHeight + Tokens.padding.medium
+
+            IconTextButton {
+                id: applyBtn
+
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                horizontalPadding: Tokens.padding.extraLarge
+                verticalPadding: Tokens.padding.medium
+                icon: "check"
+                text: Tr.t("Apply")
+                onClicked: root.applyMonitor()
+            }
+        }
+    }
+
+    // Aufloesung/Skalierung anwenden: Laufzeit (hyprctl) + persistent (hypr-user.lua).
+    function applyMonitor(): void {
+        const name = root.monName;
+        if (!name)
+            return;
+
+        // Vollen Modus-String zur gewaehlten Auflösung finden (hoechste Hz).
+        const entry = root.resList.find(e => e.res === root.selectedRes);
+        const mode = entry?.mode ?? `${root.selectedRes}@60Hz`;
+
+        const io = root.io;
+        const position = `${io.x ?? 0}x${io.y ?? 0}`;
+        const scale = root.selectedScale;
+
+        // 1) Laufzeit
         Hypr.dispatch(`keyword monitor ${name},${mode},${position},${scale}`);
 
-        // 2) Persistenz: hl.monitor-Zeile in hypr-user.lua aktualisieren/schreiben.
+        // 2) Persistenz
         userConfig.writeMonitor(name, mode, position, scale);
 
         Toaster.toast(Tr.t("Display updated"), Tr.t("Applied %1 to %2").arg(mode).arg(name), "monitor");
     }
 
-    // Uebersetzt Bezugsmonitor + Richtung in eine Pixel-Position fuer den
-    // gerade angewendeten Monitor. Nutzt die aktuelle Geometrie des Bezugs.
-    function resolvePosition(section: var): string {
-        // arrangeRef / arrangeDir liegen als Kinder im Repeater-Delegate.
-        // Wir lesen sie ueber die exponierten Properties am Section-Objekt.
-        const refName = section.refMonitorName;
-        const dir = section.placementDir;
-
-        const refMon = root.monitors.find(m => (m?.name ?? "") === refName);
-        if (!refMon) {
-            const io = section.io;
-            return `${io.x ?? 0}x${io.y ?? 0}`;
-        }
-
-        const rio = refMon.lastIpcObject ?? {};
-        const rx = rio.x ?? refMon.x ?? 0;
-        const ry = rio.y ?? refMon.y ?? 0;
-        const rw = rio.width ?? refMon.width ?? 0;
-        const rh = rio.height ?? refMon.height ?? 0;
-
-        // Eigene Modus-Groesse (fuer left/above braucht man Breite/Hoehe).
-        const ownW = parseInt(String(section.selectedMode).split("x")[0], 10) || 0;
-        const ownH = parseInt(String(section.selectedMode).split("@")[0].split("x")[1], 10) || 0;
-
-        switch (dir) {
-        case "left":
-            return `${rx - ownW}x${ry}`;
-        case "above":
-            return `${rx}x${ry - ownH}`;
-        case "below":
-            return `${rx}x${ry + rh}`;
-        case "right":
-        default:
-            return `${rx + rw}x${ry}`;
-        }
-    }
-
-    // FileView auf die User-Lua. Wir lesen den aktuellen Inhalt und ersetzen die
-    // hl.monitor-Zeile fuer den betreffenden output (oder haengen sie an).
-    // WICHTIG: FileView ist kein visuelles Item -> als Property deklarieren, nicht als
-    // direktes Kind von PageBase (sonst "Cannot assign FileView to QQuickItem*").
+    // hypr-user.lua lesen/schreiben (FileView ist kein visuelles Item -> Property!).
     readonly property FileView userConfig: FileView {
         id: userConfig
 
@@ -379,25 +191,17 @@ PageBase {
                 content = "";
         }
 
-        // Schreibt/aktualisiert hl.monitor fuer 'output'.
         function writeMonitor(output: string, mode: string, position: string, scale: real): void {
-            // Vor dem Schreiben sicherstellen, dass wir den aktuellen Inhalt haben.
             let text = content;
-
             const line = `hl.monitor({ output = "${output}", mode = "${mode}", position = "${position}", scale = ${scale} })`;
-
-            // Regex: hl.monitor({ ... output = "<output>" ... }) auf einer Zeile.
             const escaped = output.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
             const re = new RegExp(`hl\\.monitor\\(\\{[^}]*output\\s*=\\s*"${escaped}"[^}]*\\}\\)`, "m");
-
-            if (re.test(text)) {
+            if (re.test(text))
                 text = text.replace(re, line);
-            } else if (text.length === 0) {
+            else if (text.length === 0)
                 text = line + "\n";
-            } else {
+            else
                 text = text.replace(/\n*$/, "") + "\n" + line + "\n";
-            }
-
             content = text;
             setText(text);
         }
