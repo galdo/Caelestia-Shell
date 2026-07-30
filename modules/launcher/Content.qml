@@ -21,6 +21,13 @@ Item {
     implicitWidth: listWrapper.width + padding * 2
     implicitHeight: search.height + listWrapper.height + padding + search.anchors.bottomMargin
 
+    // Hintergrund (ersetzt den frueheren launcherBg-Blob): Bar-Flaeche + abgerundete Ecken.
+    StyledRect {
+        anchors.fill: parent
+        radius: root.rounding
+        color: Colours.tPalette.m3surfaceContainer
+    }
+
     Item {
         id: listWrapper
 
