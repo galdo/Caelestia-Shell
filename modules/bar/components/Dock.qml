@@ -98,8 +98,9 @@ StyledRect {
     ColumnLayout {
         id: iconColumn
 
-        anchors.centerIn: parent
-        width: parent.width
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.topMargin: Tokens.padding.medium
 
         spacing: Tokens.spacing.medium / 2
 
@@ -114,8 +115,10 @@ StyledRect {
                 readonly property bool running: root.isRunning(modelData.id)
 
                 Layout.alignment: Qt.AlignHCenter
+                Layout.preferredWidth: Tokens.sizes.bar.innerWidth
+                Layout.preferredHeight: Tokens.sizes.bar.innerWidth
                 implicitWidth: Tokens.sizes.bar.innerWidth
-                implicitHeight: implicitWidth
+                implicitHeight: Tokens.sizes.bar.innerWidth
 
                 StateLayer {
                     anchors.fill: parent
@@ -127,7 +130,7 @@ StyledRect {
                     anchors.centerIn: parent
                     asynchronous: true
                     source: Quickshell.iconPath(appItem.modelData?.icon, "image-missing")
-                    implicitSize: parent.implicitWidth * 0.7
+                    implicitSize: Math.round(Tokens.sizes.bar.innerWidth * 0.7)
                 }
 
                 // Kleiner Indikator fuer laufende Apps
