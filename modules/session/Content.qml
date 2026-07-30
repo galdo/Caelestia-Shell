@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Controls
 import Quickshell
 import Caelestia
 import Caelestia.Config
@@ -86,15 +87,10 @@ Column {
         implicitWidth: Tokens.sizes.session.button
         implicitHeight: Tokens.sizes.session.button
 
-        // Beschriftung links neben dem Button (Menue sitzt am rechten Rand).
-        StyledText {
-            anchors.right: parent.left
-            anchors.rightMargin: Tokens.spacing.medium
-            anchors.verticalCenter: parent.verticalCenter
-            text: button.label
-            color: Colours.palette.m3onSurfaceVariant
-            font: Tokens.font.body.medium
-        }
+        // Beschriftung als Tooltip bei laengerem Verharren mit der Maus.
+        ToolTip.visible: hovered && label.length > 0
+        ToolTip.delay: 500
+        ToolTip.text: button.label
 
         inactiveColour: activeFocus ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
         inactiveOnColour: activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface

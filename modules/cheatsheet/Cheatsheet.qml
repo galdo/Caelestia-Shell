@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 import Quickshell
 import Caelestia.Config
 import qs.components
@@ -90,11 +91,20 @@ Item {
             }
 
             ListView {
+                id: shortcutList
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
                 model: Keybinds.groups
                 spacing: Tokens.spacing.medium
+
+                interactive: true
+                boundsBehavior: Flickable.StopAtBounds
+                flickableDirection: Flickable.VerticalFlick
+
+                ScrollBar.vertical: ScrollBar {
+                    policy: shortcutList.contentHeight > shortcutList.height ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
+                }
 
                 delegate: ColumnLayout {
                     required property var modelData
