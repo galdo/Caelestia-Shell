@@ -19,8 +19,10 @@ Item {
     required property int rounding
 
     readonly property bool showWallpapers: search.text.startsWith(`${GlobalConfig.launcher.actionPrefix}wallpaper `)
-    readonly property var currentList: showWallpapers ? wallpaperList.item : appList.item // Can be either ListView or PathView, so can't type properly
-    property string animState: showWallpapers ? "wallpapers" : "apps"
+    // "?" (ohne actionPrefix) -> vergroessertes Raster aller installierten Apps.
+    readonly property bool showAllApps: search.text.startsWith("?")
+    readonly property var currentList: showAllApps ? allAppsGrid.item : (showWallpapers ? wallpaperList.item : appList.item) // Can be either ListView, GridView or PathView, so can't type properly
+    property string animState: showAllApps ? "allApps" : (showWallpapers ? "wallpapers" : "apps")
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom
@@ -50,6 +52,21 @@ Item {
                 root.implicitWidth: Math.max(root.Tokens.sizes.launcher.itemWidth * 1.2, wallpaperList.implicitWidth)
                 root.implicitHeight: root.Tokens.sizes.launcher.wallpaperHeight
                 wallpaperList.active: true
+            }
+        },
+        State {
+            name: "allApps"
+
+            PropertyChanges {
+                // Breiter (mehr Spalten) und hoch (scrollbares Raster) -> Uebersicht.
+                root.implicitWidth: root.Tokens.sizes.launcher.itemWidth * 1.4
+                root.implicitHeight: root.maxHeight
+                allAppsGrid.active: true
+            }
+
+            AnchorChanges {
+                anchors.left: root.parent.left
+                anchors.right: root.parent.right
             }
         }
     ]
@@ -106,6 +123,22 @@ Item {
             screenState: root.screenState
             panels: root.panels
             content: root.content
+        }
+    }
+
+    Loader {
+        id: allAppsGrid
+
+        asynchronous: true
+        active: false
+
+        anchors.fill: parent
+
+        sourceComponent: AppGrid {
+            objectName: "launcherAppGrid"
+
+            search: root.search
+            screenState: root.screenState
         }
     }
 

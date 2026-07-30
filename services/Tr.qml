@@ -551,6 +551,7 @@ Singleton {
         "Try searching for something else": "Versuche, nach etwas anderem zu suchen",
         "Try switching to a window": "Versuche, zu einem Fenster zu wechseln",
         "Type an expression to calculate": "Ausdruck zum Berechnen eingeben",
+        "Type \"%1\" for commands, \"?\" for all apps": "\"%1\" für Befehle, \"?\" für alle Apps",
         "UI language, weather location, display units": "UI-Sprache, Wetterort, Anzeigeeinheiten",
         "Unavailable": "Nicht verfügbar",
         "Units": "Einheiten",

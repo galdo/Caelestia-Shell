@@ -66,7 +66,7 @@ Item {
         topPadding: Math.round((Tokens.padding.medium + Tokens.padding.large) / 2)
         bottomPadding: Math.round((Tokens.padding.medium + Tokens.padding.large) / 2)
 
-        placeholderText: Tr.t("Type \"%1\" for commands").arg(GlobalConfig.launcher.actionPrefix)
+        placeholderText: Tr.t("Type \"%1\" for commands, \"?\" for all apps").arg(GlobalConfig.launcher.actionPrefix)
 
         onAccepted: {
             const currentItem = list.currentList?.currentItem;
@@ -75,6 +75,10 @@ Item {
                     if (Colours.scheme === "dynamic" && currentItem.modelData.path !== Wallpapers.actualCurrent)
                         Wallpapers.previewColourLock = true;
                     Wallpapers.setWallpaper(currentItem.modelData.path);
+                    root.screenState.launcher = false;
+                } else if (list.showAllApps) {
+                    // "?"-Raster: markierte App starten.
+                    Apps.launch(currentItem.modelData);
                     root.screenState.launcher = false;
                 } else if (text.startsWith(GlobalConfig.launcher.actionPrefix)) {
                     if (text.startsWith(`${GlobalConfig.launcher.actionPrefix}calc `))
@@ -90,6 +94,20 @@ Item {
 
         Keys.onUpPressed: list.currentList?.decrementCurrentIndex()
         Keys.onDownPressed: list.currentList?.incrementCurrentIndex()
+
+        // Im "?"-Raster zusaetzlich Links/Rechts zum Navigieren (GridView).
+        Keys.onLeftPressed: event => {
+            if (list.showAllApps) {
+                list.currentList?.decrementCurrentIndex();
+                event.accepted = true;
+            }
+        }
+        Keys.onRightPressed: event => {
+            if (list.showAllApps) {
+                list.currentList?.incrementCurrentIndex();
+                event.accepted = true;
+            }
+        }
 
         Keys.onEscapePressed: root.screenState.launcher = false
 
