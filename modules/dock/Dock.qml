@@ -185,9 +185,12 @@ Variants {
 
             // Panel-Look: klebt buendig an der Unterkante (kein Abstand), Slide faehrt
             // es nach unten aus dem Rand. Obere Ecken gerundet, untere kantig (am Rand).
+            // Slide-Distanz wie echte Panels: implicitHeight + 5px Puffer, damit die Pille
+            // beim Overshoot-Easing (DefaultSpatial) komplett hinter dem Rand verschwindet
+            // und beim Reinkommen sichtbar "wobbelt" (identisch zu Session/Sidebar).
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: -(implicitHeight) * win.offsetScale
+            anchors.bottomMargin: (-implicitHeight - 5) * win.offsetScale
             opacity: 1 - win.offsetScale
 
             color: Colours.tPalette.m3surface

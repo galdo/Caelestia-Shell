@@ -42,12 +42,7 @@ Item {
         opacity: root.animOpacity * 0.4
     }
 
-    // Esc schliesst
-    Item {
-        anchors.fill: parent
-        focus: root.shouldBeActive
-        Keys.onEscapePressed: root.screenState.cheatsheet = false
-    }
+    // Esc schliesst (Fokus liegt auf der ListView, siehe unten)
 
     StyledRect {
         id: card
@@ -97,6 +92,12 @@ Item {
                 clip: true
                 model: Keybinds.groups
                 spacing: Tokens.spacing.medium
+
+                // Fokus auf die Liste, sobald das Overlay offen ist -> Mausrad + Tastatur
+                // (Pfeile/PageUp/Down) scrollen; Esc schliesst. Ohne Fokus reagiert der
+                // Scrollbalken nicht (Fenster-keyboardFocus wird in ContentWindow gesetzt).
+                focus: root.shouldBeActive
+                Keys.onEscapePressed: root.screenState.cheatsheet = false
 
                 interactive: true
                 boundsBehavior: Flickable.StopAtBounds
