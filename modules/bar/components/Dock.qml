@@ -21,6 +21,9 @@ StyledRect {
 
     // Angeheftete App-IDs -> DesktopEntry (heuristisch aufgeloest, null gefiltert)
     readonly property var pinnedEntries: {
+        // Abhaengigkeit von applications: neu auswerten, sobald die App-DB bereit ist
+        // (sonst liefert heuristicLookup beim Start null -> Icons erst nach Aenderung).
+        const _dep = DesktopEntries.applications?.values?.length ?? 0;
         try {
             return (GlobalConfig.dock.pinned ?? []).map(id => DesktopEntries.heuristicLookup(id)).filter(e => e);
         } catch (e) {
