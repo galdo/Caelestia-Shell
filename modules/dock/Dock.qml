@@ -47,7 +47,7 @@ Variants {
             });
         }
 
-        readonly property bool revealed: revealHover.hovered || !occluded
+        readonly property bool revealed: revealHover.hovered || !occluded || dockPill.contextOpen
 
         screen: modelData
         name: "dock"
@@ -66,18 +66,23 @@ Variants {
         implicitHeight: dockPill.implicitHeight + slideRoom
         readonly property int slideRoom: dockPill.implicitHeight + Tokens.padding.large * 2
 
-        // Klickbar/hoverbar nur: die Pille + ein duenner Streifen unter der Pille
-        // (Reveal-Trigger, mittig - kollidiert nicht mit der linken Bar).
-        // Rest klick-transparent -> Bar-Buttons darunter erreichbar.
-        mask: Region {
+        // Klickbar: bei offenem Kontextmenue das ganze Fenster (Menue + Klick-ausserhalb),
+        // sonst nur Pille + duenner Reveal-Streifen (Rest klick-transparent -> Bar erreichbar).
+        mask: dockPill.contextOpen ? fullMask : pillMask
+
+        Region {
+            id: fullMask
+        }
+        Region {
+            id: pillMask
             Region {
                 item: dockPill
             }
             Region {
-                x: (win.width - revealWidth) / 2
-                y: win.height - revealZone
-                width: revealWidth
-                height: revealZone
+                x: (win.width - win.revealWidth) / 2
+                y: win.height - win.revealZone
+                width: win.revealWidth
+                height: win.revealZone
             }
         }
         readonly property int revealZone: Tokens.padding.small
@@ -157,6 +162,37 @@ Variants {
                 } catch (e) {}
             }
 
+            function isPinned(entry) {
+                return (GlobalConfig.dock.pinned ?? []).includes(entry?.id);
+            }
+            function pin(entry) {
+                if (!entry?.id)
+                    return;
+                const pinned = (GlobalConfig.dock.pinned ?? []).slice();
+                if (!pinned.includes(entry.id)) {
+                    pinned.push(entry.id);
+                    GlobalConfig.dock.pinned = pinned;
+                }
+            }
+            function unpin(entry) {
+                if (!entry?.id)
+                    return;
+                GlobalConfig.dock.pinned = (GlobalConfig.dock.pinned ?? []).filter(a => a !== entry.id);
+            }
+
+            // Kontextmenue-State
+            property var contextEntry: null
+            property real contextX: 0
+            readonly property bool contextOpen: contextEntry !== null
+            function openContext(item) {
+                contextEntry = item.modelData;
+                // X-Position des Menues an das angeklickte Icon koppeln (relativ zur Pille)
+                contextX = item.mapToItem(dockPill, item.width / 2, 0).x;
+            }
+            function closeContext() {
+                contextEntry = null;
+            }
+
             // Panel-Look: klebt buendig an der Unterkante (kein Abstand), Slide faehrt
             // es nach unten aus dem Rand. Obere Ecken gerundet, untere kantig (am Rand).
             anchors.horizontalCenter: parent.horizontalCenter
@@ -187,6 +223,7 @@ Variants {
                         required property var modelData
 
                         readonly property bool running: dockPill.isRunning(modelData.id)
+                        readonly property bool pinned: dockPill.isPinned(modelData)
 
                         Layout.alignment: Qt.AlignVCenter
                         implicitWidth: Tokens.sizes.bar.innerWidth
@@ -196,6 +233,13 @@ Variants {
                             anchors.fill: parent
                             radius: Tokens.rounding.full
                             onClicked: dockPill.activate(appItem.modelData)
+                        }
+
+                        // Rechtsklick: Pin/Unpin-Kontextmenue
+                        MouseArea {
+                            anchors.fill: parent
+                            acceptedButtons: Qt.RightButton
+                            onClicked: dockPill.openContext(appItem)
                         }
 
                         IconImage {
@@ -218,6 +262,54 @@ Variants {
                     }
                 }
             }
+        }
+
+        // Pin/Unpin-Kontextmenue (ueber der Pille, klappt nach oben auf)
+        StyledRect {
+            id: contextMenu
+
+            readonly property var entry: dockPill.contextEntry
+            readonly property bool isPinned: dockPill.isPinned(entry)
+
+            visible: dockPill.contextOpen
+            color: Colours.tPalette.m3surfaceContainerHigh
+            radius: Tokens.rounding.small
+            z: 10
+
+            implicitWidth: ctxLabel.implicitWidth + Tokens.padding.large * 2
+            implicitHeight: ctxLabel.implicitHeight + Tokens.padding.medium * 2
+
+            // Am Icon ausrichten, direkt oberhalb der Pille
+            x: Math.round(dockPill.x + dockPill.contextX - implicitWidth / 2)
+            y: dockPill.y - implicitHeight - Tokens.padding.small
+
+            StateLayer {
+                anchors.fill: parent
+                radius: parent.radius
+                onClicked: {
+                    if (contextMenu.isPinned)
+                        dockPill.unpin(contextMenu.entry);
+                    else
+                        dockPill.pin(contextMenu.entry);
+                    dockPill.closeContext();
+                }
+            }
+
+            StyledText {
+                id: ctxLabel
+                anchors.centerIn: parent
+                text: contextMenu.isPinned ? Tr.t("Unpin") : Tr.t("Pin")
+                color: Colours.palette.m3onSurface
+            }
+        }
+
+        // Klick ausserhalb schliesst das Kontextmenue
+        MouseArea {
+            anchors.fill: parent
+            visible: dockPill.contextOpen
+            enabled: dockPill.contextOpen
+            z: 9
+            onClicked: dockPill.closeContext()
         }
     }
 }
