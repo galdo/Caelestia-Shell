@@ -23,11 +23,10 @@ Item {
     anchors.fill: parent
     visible: animOpacity > 0
 
-    // Fokus aktiv holen, sobald das Overlay oeffnet (deklaratives focus: greift nicht
-    // zuverlaessig, wenn das Item schon existiert) -> Tastatur (Pfeile/PageUp/Down/Esc).
+    // Fokus aktiv holen, sobald das Overlay oeffnet -> Tastatur (Pfeile/PageUp/Down/Esc).
     onShouldBeActiveChanged: {
         if (shouldBeActive)
-            shortcutList.forceActiveFocus();
+            keyHandler.forceActiveFocus();
     }
 
     Behavior on animScale {
@@ -49,7 +48,30 @@ Item {
         opacity: root.animOpacity * 0.4
     }
 
-    // Esc schliesst (Fokus liegt auf der ListView, siehe unten)
+    // Tastatur-Handling auf einem umschliessenden Item (Muster wie Launcher/Content.qml):
+    // forceActiveFocus() beim Oeffnen, Keys steuern die Liste. Eine ListView selbst nimmt
+    // Fokus/Keys nicht zuverlaessig an.
+    Item {
+        id: keyHandler
+
+        anchors.fill: parent
+        focus: root.shouldBeActive
+
+        Keys.onEscapePressed: root.screenState.cheatsheet = false
+        Keys.onUpPressed: shortcutList.flick(0, 600)
+        Keys.onDownPressed: shortcutList.flick(0, -600)
+        Keys.onPressed: event => {
+            if (event.key === Qt.Key_PageUp) {
+                shortcutList.flick(0, 1600);
+                event.accepted = true;
+            } else if (event.key === Qt.Key_PageDown) {
+                shortcutList.flick(0, -1600);
+                event.accepted = true;
+            }
+        }
+
+        Component.onCompleted: if (root.shouldBeActive) forceActiveFocus()
+    }
 
     StyledRect {
         id: card
@@ -64,13 +86,11 @@ Item {
         implicitWidth: Math.min(root.width * 0.6, 720)
         implicitHeight: Math.min(root.height * 0.75, 640)
 
-        // Klicks auf der Karte nicht an den schliessenden Hintergrund durchreichen.
-        // WICHTIG: nur Maustasten abfangen, KEINE Wheel-Events schlucken -> sonst
-        // erreicht das Mausrad die ListView darunter nicht (Scroll tot).
+        // Klicks auf der Karte NICHT an den schliessenden Hintergrund durchreichen.
+        // Nur Maustasten abfangen; Wheel laeuft ueber den WheelHandler der ListView.
         MouseArea {
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton | Qt.RightButton
-            onWheel: wheel => wheel.accepted = false
         }
 
         ColumnLayout {
@@ -104,15 +124,17 @@ Item {
                 model: Keybinds.groups
                 spacing: Tokens.spacing.medium
 
-                // Fokus auf die Liste, sobald das Overlay offen ist -> Mausrad + Tastatur
-                // (Pfeile/PageUp/Down) scrollen; Esc schliesst. Ohne Fokus reagiert der
-                // Scrollbalken nicht (Fenster-keyboardFocus wird in ContentWindow gesetzt).
-                focus: root.shouldBeActive
-                Keys.onEscapePressed: root.screenState.cheatsheet = false
-
                 interactive: true
                 boundsBehavior: Flickable.StopAtBounds
                 flickableDirection: Flickable.VerticalFlick
+
+                // Mausrad -> Liste scrollen. WheelHandler statt MouseArea, damit er nicht
+                // mit der Klick-MouseArea der Karte kollidiert und Wheel zuverlaessig greift.
+                WheelHandler {
+                    onWheel: event => {
+                        shortcutList.flick(0, event.angleDelta.y * 8);
+                    }
+                }
 
                 ScrollBar.vertical: ScrollBar {
                     policy: shortcutList.contentHeight > shortcutList.height ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
