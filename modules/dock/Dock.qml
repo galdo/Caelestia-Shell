@@ -140,17 +140,20 @@ Variants {
                 } catch (e) {}
             }
 
-            // Zentriert unten; per offsetScale nach unten geschoben/ausgeblendet.
+            // Panel-Look: klebt buendig an der Unterkante (kein Abstand), Slide faehrt
+            // es nach unten aus dem Rand. Obere Ecken gerundet, untere kantig (am Rand).
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: Tokens.padding.large - (implicitHeight + Tokens.padding.large) * win.offsetScale
+            anchors.bottomMargin: -(implicitHeight) * win.offsetScale
             opacity: 1 - win.offsetScale
 
-            color: Colours.tPalette.m3surface
-            radius: Tokens.rounding.full
+            color: Colours.tPalette.m3surfaceContainer
+            radius: Tokens.rounding.large
+            bottomLeftRadius: 0
+            bottomRightRadius: 0
 
             implicitWidth: iconRow.implicitWidth + Tokens.padding.medium * 2
-            implicitHeight: iconRow.implicitHeight + Tokens.padding.small * 2
+            implicitHeight: iconRow.implicitHeight + Tokens.padding.medium * 2
 
             RowLayout {
                 id: iconRow
