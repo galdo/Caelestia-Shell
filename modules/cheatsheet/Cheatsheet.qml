@@ -59,7 +59,7 @@ Item {
         scale: root.animScale
 
         implicitWidth: Math.min(root.width * 0.6, 720)
-        implicitHeight: Math.min(root.height * 0.8, layout.implicitHeight + Tokens.padding.large * 2)
+        implicitHeight: Math.min(root.height * 0.75, 640)
 
         // Klicks auf der Karte nicht an den schliessenden Hintergrund durchreichen
         MouseArea {

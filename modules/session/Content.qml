@@ -24,6 +24,7 @@ Column {
 
         icon: Config.session.icons.logout
         command: Config.session.commands.logout
+        label: Tr.t("Log out")
 
         KeyNavigation.down: shutdown
 
@@ -44,21 +45,10 @@ Column {
 
         icon: Config.session.icons.shutdown
         command: Config.session.commands.shutdown
+        label: Tr.t("Shut down")
 
         KeyNavigation.up: logout
         KeyNavigation.down: hibernate
-    }
-
-    AnimatedImage {
-        width: Tokens.sizes.session.button
-        height: Tokens.sizes.session.button
-        sourceSize.width: width * ((QsWindow.window as QsWindow)?.devicePixelRatio ?? 1)
-
-        playing: visible
-        asynchronous: true
-        speed: Config.general.sessionGifSpeed
-        source: Paths.absolutePath(Config.paths.sessionGif)
-        fillMode: AnimatedImage.PreserveAspectFit
     }
 
     SessionButton {
@@ -66,6 +56,7 @@ Column {
 
         icon: Config.session.icons.hibernate
         command: Config.session.commands.hibernate
+        label: Tr.t("Hibernate")
 
         KeyNavigation.up: shutdown
         KeyNavigation.down: reboot
@@ -76,6 +67,7 @@ Column {
 
         icon: Config.session.icons.reboot
         command: Config.session.commands.reboot
+        label: Tr.t("Restart")
 
         KeyNavigation.up: hibernate
     }
@@ -84,6 +76,7 @@ Column {
         id: button
 
         required property list<string> command
+        property string label
 
         function exec(): void {
             if (!SessionManager.exec(command))
@@ -92,6 +85,16 @@ Column {
 
         implicitWidth: Tokens.sizes.session.button
         implicitHeight: Tokens.sizes.session.button
+
+        // Beschriftung links neben dem Button (Menue sitzt am rechten Rand).
+        StyledText {
+            anchors.right: parent.left
+            anchors.rightMargin: Tokens.spacing.medium
+            anchors.verticalCenter: parent.verticalCenter
+            text: button.label
+            color: Colours.palette.m3onSurfaceVariant
+            font: Tokens.font.body.medium
+        }
 
         inactiveColour: activeFocus ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
         inactiveOnColour: activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface

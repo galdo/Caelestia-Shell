@@ -659,6 +659,10 @@ Singleton {
         "Pinned apps": "Angeheftete Apps",
         "Add app": "App hinzufügen",
         "Select an app to pin": "App zum Anheften auswählen",
-        "No pinned apps yet": "Noch keine Apps angeheftet"
+        "No pinned apps yet": "Noch keine Apps angeheftet",
+        "Log out": "Abmelden",
+        "Shut down": "Herunterfahren",
+        "Hibernate": "Ruhezustand",
+        "Restart": "Neustart"
     })
 }
