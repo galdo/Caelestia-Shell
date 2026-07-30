@@ -19,10 +19,12 @@ Item {
     required property int rounding
 
     readonly property bool showWallpapers: search.text.startsWith(`${GlobalConfig.launcher.actionPrefix}wallpaper `)
-    // "?" (ohne actionPrefix) -> vergroessertes Raster aller installierten Apps.
-    readonly property bool showAllApps: search.text.startsWith("?")
-    readonly property var currentList: showAllApps ? allAppsGrid.item : (showWallpapers ? wallpaperList.item : appList.item) // Can be either ListView, GridView or PathView, so can't type properly
-    property string animState: showAllApps ? "allApps" : (showWallpapers ? "wallpapers" : "apps")
+    readonly property var currentList: showWallpapers ? wallpaperList.item : appList.item // Can be either ListView or PathView, so can't type properly
+    property string animState: showWallpapers ? "wallpapers" : "apps"
+
+    // Leere Suche (direkt nach SUPER, noch nichts getippt) -> Liste hat keine Hoehe,
+    // damit ueber der Suchleiste kein Platz verschwendet wird.
+    readonly property bool hasQuery: (search?.text ?? "").trim().length > 0
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom
@@ -36,7 +38,9 @@ Item {
 
             PropertyChanges {
                 root.implicitWidth: root.Tokens.sizes.launcher.itemWidth
-                root.implicitHeight: Math.min(root.maxHeight, appList.implicitHeight > 0 ? appList.implicitHeight : empty.implicitHeight)
+                // Bei leerer Suche 0 (nur Suchleiste). Sonst: Listenhoehe bzw. die
+                // "keine Ergebnisse"-Meldung.
+                root.implicitHeight: !root.hasQuery ? 0 : Math.min(root.maxHeight, appList.implicitHeight > 0 ? appList.implicitHeight : empty.implicitHeight)
                 appList.active: true
             }
 
@@ -52,21 +56,6 @@ Item {
                 root.implicitWidth: Math.max(root.Tokens.sizes.launcher.itemWidth * 1.2, wallpaperList.implicitWidth)
                 root.implicitHeight: root.Tokens.sizes.launcher.wallpaperHeight
                 wallpaperList.active: true
-            }
-        },
-        State {
-            name: "allApps"
-
-            PropertyChanges {
-                // Breiter (mehr Spalten) und hoch (scrollbares Raster) -> Uebersicht.
-                root.implicitWidth: root.Tokens.sizes.launcher.itemWidth * 1.4
-                root.implicitHeight: root.maxHeight
-                allAppsGrid.active: true
-            }
-
-            AnchorChanges {
-                anchors.left: root.parent.left
-                anchors.right: root.parent.right
             }
         }
     ]
@@ -126,29 +115,12 @@ Item {
         }
     }
 
-    Loader {
-        id: allAppsGrid
-
-        asynchronous: true
-        active: false
-
-        anchors.fill: parent
-
-        sourceComponent: AppGrid {
-            objectName: "launcherAppGrid"
-
-            search: root.search
-            screenState: root.screenState
-        }
-    }
-
     Row {
         id: empty
 
         // Nur bei nicht-leerer Suche die "Keine Ergebnisse"-Meldung zeigen.
-        readonly property bool hasQuery: (root.search?.text ?? "").trim().length > 0
-        opacity: hasQuery && root.currentList?.count === 0 ? 1 : 0
-        scale: hasQuery && root.currentList?.count === 0 ? 1 : 0.5
+        opacity: root.hasQuery && root.currentList?.count === 0 ? 1 : 0
+        scale: root.hasQuery && root.currentList?.count === 0 ? 1 : 0.5
 
         spacing: Tokens.spacing.medium
         padding: Tokens.padding.large

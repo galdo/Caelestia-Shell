@@ -13,6 +13,7 @@ import qs.modules.utilities as Utilities
 import qs.modules.bar.popouts as BarPopouts
 import qs.modules.utilities.toasts as Toasts
 import qs.modules.cheatsheet as Cheatsheet
+import qs.modules.appgrid as AppGrid
 
 Item {
     id: root
@@ -155,6 +156,14 @@ Item {
 
     Cheatsheet.Cheatsheet {
         id: cheatsheet
+
+        screenState: root.screenState
+
+        anchors.fill: parent
+    }
+
+    AppGrid.AppGridPanel {
+        id: appgrid
 
         screenState: root.screenState
 

@@ -10,27 +10,20 @@ import qs.services
 import qs.utils
 import qs.modules.launcher.services
 
-// Vergroesserte Uebersicht ALLER installierten Apps als Icon-Raster mit Beschriftung
-// unter jedem Icon. Aktiviert ueber den "?"-Prefix im Launcher (analog zu Wallpapers).
-// Bietet currentIndex/currentItem/incrementCurrentIndex/decrementCurrentIndex (GridView
-// nativ) -> Enter/Pfeile im Content.qml funktionieren wie bei den anderen Listen.
+// Icon-Raster ALLER installierten Apps mit Beschriftung unter jedem Icon.
+// Wird vom AppGridPanel verwendet. Bietet GridView-Navigation (Pfeile/Enter).
 GridView {
     id: root
 
-    required property SearchBar search
     required property ScreenState screenState
+    property string filterText: ""
 
-    // Alle sichtbaren Apps (versteckte via hiddenApps rausgefiltert), alphabetisch.
-    // Wenn nach dem "?" noch Text steht, danach filtern (Name-Substring).
-    readonly property string filterText: {
-        const t = search.text ?? "";
-        const p = "?";
-        return t.startsWith(p) ? t.slice(p.length).trim().toLowerCase() : "";
-    }
+    // Alle sichtbaren Apps (versteckte via hiddenApps raus), nach Name gefiltert, alphabetisch.
     readonly property var allApps: {
         const list = DesktopEntries.applications?.values ?? [];
         const visible = list.filter(a => a && !Strings.testRegexList(GlobalConfig.launcher.hiddenApps, a.id));
-        const filtered = root.filterText.length === 0 ? visible : visible.filter(a => (a.name ?? "").toLowerCase().includes(root.filterText));
+        const f = (root.filterText ?? "").trim().toLowerCase();
+        const filtered = f.length === 0 ? visible : visible.filter(a => (a.name ?? "").toLowerCase().includes(f));
         return filtered.slice().sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
     }
 
@@ -47,7 +40,6 @@ GridView {
         onValuesChanged: root.currentIndex = 0
     }
 
-    // Markierung des aktiven Items
     highlightFollowsCurrentItem: true
     highlight: StyledRect {
         radius: Tokens.rounding.large
@@ -75,7 +67,7 @@ GridView {
             onClicked: {
                 root.currentIndex = appCell.index;
                 Apps.launch(appCell.modelData);
-                root.screenState.launcher = false;
+                root.screenState.appgrid = false;
             }
         }
 

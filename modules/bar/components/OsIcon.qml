@@ -14,9 +14,15 @@ Item {
     MouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
-        onClicked: {
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        // Linksklick: App-Raster (alle installierten Apps). Rechtsklick: Launcher.
+        // (Launcher zusaetzlich per SUPER.) -> beide getrennt erreichbar zum Vergleich.
+        onClicked: mouse => {
             const screenState = ShellState.forActive();
-            screenState.launcher = !screenState.launcher;
+            if (mouse.button === Qt.RightButton)
+                screenState.launcher = !screenState.launcher;
+            else
+                screenState.appgrid = !screenState.appgrid;
         }
     }
 

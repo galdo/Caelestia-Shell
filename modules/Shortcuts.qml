@@ -119,6 +119,19 @@ Scope {
         }
     }
 
+    // qmllint disable unresolved-type
+    CustomShortcut {
+        // qmllint enable unresolved-type
+        name: "appgrid"
+        description: "Toggle app grid (all installed apps)"
+        onPressed: {
+            if (root.hasFullscreen)
+                return;
+            const screenState = ShellState.forActive();
+            screenState.appgrid = !screenState.appgrid;
+        }
+    }
+
     IpcHandler {
         function toggle(drawer: string): void {
             if (list().split("\n").includes(drawer)) {

@@ -68,9 +68,12 @@ StyledWindow {
     name: "drawers"
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: (fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top
-    WlrLayershell.keyboardFocus: screenState.launcher || screenState.session || screenState.cheatsheet ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: screenState.launcher || screenState.session || screenState.cheatsheet || screenState.appgrid ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
-    mask: hasFullscreen ? emptyRegion : regions
+    // Vollbild-Overlays (appgrid, cheatsheet) brauchen die ganze Flaeche in der Klick-Maske,
+    // sonst sind Grid/Scroll/Klick-zum-Schliessen nicht erreichbar (Rest ist klick-transparent).
+    readonly property bool hasFullOverlay: screenState.appgrid || screenState.cheatsheet
+    mask: hasFullscreen ? emptyRegion : (hasFullOverlay ? fullRegion : regions)
 
     anchors.top: true
     anchors.bottom: true
@@ -107,6 +110,16 @@ StyledWindow {
         bar: bar
         panels: panels
         win: root
+    }
+
+    // Ganze Fensterflaeche (fuer Vollbild-Overlays appgrid/cheatsheet).
+    Region {
+        id: fullRegion
+
+        x: 0
+        y: 0
+        width: root.width
+        height: root.height
     }
 
     HyprlandFocusGrab {
