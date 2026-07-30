@@ -288,17 +288,14 @@ PageBase {
     // MenuItem-Fabriken (dynamische Modi/Referenzen).
     // WICHTIG: Component ist kein visuelles Item -> als Property deklarieren, nicht als
     // direktes Kind von PageBase (sonst "Cannot assign Component to QQuickItem*").
+    // MenuItem hat 'text' bereits; 'objectName' ist Standard-QML -> NICHT neu als
+    // required deklarieren (das erzeugt eine Warn-Schleife "text was not initialized"
+    // -> Dauer-Render -> hohe CPU). createObject setzt die vorhandenen Properties.
     readonly property Component modeItemComp: Component {
-        MenuItem {
-            required property string objectName
-            required property string text
-        }
+        MenuItem {}
     }
     readonly property Component refItemComp: Component {
-        MenuItem {
-            required property string objectName
-            required property string text
-        }
+        MenuItem {}
     }
 
     // Berechnet die Position (Pixel "XxY") aus Bezugsmonitor + Richtung.
