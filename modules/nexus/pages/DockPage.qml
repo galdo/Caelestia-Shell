@@ -15,15 +15,16 @@ PageBase {
 
     title: Tr.t("Dock")
 
-    // Positions-Optionen (unten / oben)
+    // Positions-Optionen (unten / oben). objectName als stabiler Schluessel
+    // (dynamische Custom-Properties gehen beim MenuItem-Signal verloren).
     readonly property list<MenuItem> positionItems: [
         MenuItem {
+            objectName: "bottom"
             text: Tr.t("Bottom")
-            property string value: "bottom"
         },
         MenuItem {
+            objectName: "top"
             text: Tr.t("Top")
-            property string value: "top"
         }
     ]
 
@@ -77,8 +78,8 @@ PageBase {
             label: Tr.t("Position")
             subtext: Tr.t("Where the dock attaches to the bar")
             menuItems: root.positionItems
-            active: root.positionItems.find(i => i.value === GlobalConfig.dock.position) ?? root.positionItems[0]
-            onSelected: item => GlobalConfig.dock.position = item.value
+            active: root.positionItems.find(i => i.objectName === GlobalConfig.dock.position) ?? root.positionItems[0]
+            onSelected: item => GlobalConfig.dock.position = item.objectName
         }
 
         // Angeheftete Apps
