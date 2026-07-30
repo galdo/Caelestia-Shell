@@ -162,35 +162,34 @@ Variants {
                 } catch (e) {}
             }
 
-            function isPinned(entry) {
-                return (GlobalConfig.dock.pinned ?? []).includes(entry?.id);
+            function isPinnedId(id) {
+                return (GlobalConfig.dock.pinned ?? []).includes(id);
             }
-            function pin(entry) {
-                if (!entry?.id)
+            function pinId(id) {
+                if (!id)
                     return;
                 const pinned = (GlobalConfig.dock.pinned ?? []).slice();
-                if (!pinned.includes(entry.id)) {
-                    pinned.push(entry.id);
+                if (!pinned.includes(id)) {
+                    pinned.push(id);
                     GlobalConfig.dock.pinned = pinned;
                 }
             }
-            function unpin(entry) {
-                if (!entry?.id)
+            function unpinId(id) {
+                if (!id)
                     return;
-                GlobalConfig.dock.pinned = (GlobalConfig.dock.pinned ?? []).filter(a => a !== entry.id);
+                GlobalConfig.dock.pinned = (GlobalConfig.dock.pinned ?? []).filter(a => a !== id);
             }
 
-            // Kontextmenue-State
-            property var contextEntry: null
+            // Kontextmenue-State: nur die ID merken (Objekt wird beim Repeater-Neuaufbau ungueltig)
+            property string contextId: ""
             property real contextX: 0
-            readonly property bool contextOpen: contextEntry !== null
+            readonly property bool contextOpen: contextId.length > 0
             function openContext(item) {
-                contextEntry = item.modelData;
-                // X-Position des Menues an das angeklickte Icon koppeln (relativ zur Pille)
+                contextId = item.modelData?.id ?? "";
                 contextX = item.mapToItem(dockPill, item.width / 2, 0).x;
             }
             function closeContext() {
-                contextEntry = null;
+                contextId = "";
             }
 
             // Panel-Look: klebt buendig an der Unterkante (kein Abstand), Slide faehrt
@@ -223,7 +222,7 @@ Variants {
                         required property var modelData
 
                         readonly property bool running: dockPill.isRunning(modelData.id)
-                        readonly property bool pinned: dockPill.isPinned(modelData)
+                        readonly property bool pinned: dockPill.isPinnedId(modelData?.id)
 
                         Layout.alignment: Qt.AlignVCenter
                         implicitWidth: Tokens.sizes.bar.innerWidth
@@ -268,8 +267,8 @@ Variants {
         StyledRect {
             id: contextMenu
 
-            readonly property var entry: dockPill.contextEntry
-            readonly property bool isPinned: dockPill.isPinned(entry)
+            readonly property string entryId: dockPill.contextId
+            readonly property bool isPinned: dockPill.isPinnedId(entryId)
 
             visible: dockPill.contextOpen
             color: Colours.tPalette.m3surfaceContainerHigh
@@ -287,11 +286,13 @@ Variants {
                 anchors.fill: parent
                 radius: parent.radius
                 onClicked: {
-                    if (contextMenu.isPinned)
-                        dockPill.unpin(contextMenu.entry);
+                    const id = contextMenu.entryId;
+                    const wasPinned = contextMenu.isPinned;
+                    dockPill.closeContext();   // zuerst schliessen (vermeidet Deadlock beim Repeater-Neuaufbau)
+                    if (wasPinned)
+                        dockPill.unpinId(id);
                     else
-                        dockPill.pin(contextMenu.entry);
-                    dockPill.closeContext();
+                        dockPill.pinId(id);
                 }
             }
 
