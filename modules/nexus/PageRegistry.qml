@@ -16,13 +16,12 @@ QtObject {
         },
 
         // Connectivity
-        // TODO
-        // {
-        //     label: Tr.t("Display"),
-        //     icon: "monitor",
-        //     description: Tr.t("Output configuration"),
-        //     category: "connectivity"
-        // },
+        {
+            label: Tr.t("Display"),
+            icon: "monitor",
+            description: Tr.t("Output configuration"),
+            category: "connectivity"
+        },
         {
             label: Tr.t("Network"),
             icon: "wifi",
@@ -54,6 +53,12 @@ QtObject {
             label: Tr.t("Plugins"),
             icon: "extension",
             description: Tr.t("Manage plugins"),
+            category: "system"
+        },
+        {
+            label: Tr.t("User"),
+            icon: "person",
+            description: Tr.t("Name, avatar"),
             category: "system"
         },
 
