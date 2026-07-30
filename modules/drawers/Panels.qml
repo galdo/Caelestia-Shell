@@ -3,7 +3,6 @@ import Quickshell
 import Caelestia.Config
 import qs.components
 import qs.modules.bar as Bar
-import qs.modules.bar.components as BarComponents
 import qs.modules.dashboard as Dashboard
 import qs.modules.launcher as Launcher
 import qs.modules.notifications as Notifications
@@ -160,17 +159,5 @@ Item {
         screenState: root.screenState
 
         anchors.fill: parent
-    }
-
-    // Dock: eigene App-Pille, links an der Bar-Kante, unten bzw. oben.
-    // Panels-Container beginnt bereits bei bar.implicitWidth -> x:0 = direkt an der Bar.
-    BarComponents.Dock {
-        id: dock
-
-        anchors.left: parent.left
-        anchors.leftMargin: Tokens.padding.small
-        y: GlobalConfig.dock.position === "top"
-            ? Tokens.padding.large
-            : parent.height - height - Tokens.padding.large
     }
 }

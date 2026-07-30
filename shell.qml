@@ -7,6 +7,7 @@
 import "modules"
 import "modules/drawers"
 import "modules/background"
+import "modules/dock"
 import "modules/areapicker"
 import "modules/lock"
 import QtQuick
@@ -29,6 +30,7 @@ ShellRoot {
 
     Background {}
     Drawers {}
+    Dock {}
     AreaPicker {}
     Lock {
         id: lock
