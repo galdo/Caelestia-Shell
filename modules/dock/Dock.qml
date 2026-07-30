@@ -49,7 +49,7 @@ Variants {
             });
         }
 
-        readonly property bool revealed: revealHover.hovered || !occluded || dockPill.contextOpen
+        readonly property bool revealed: revealHover.hovered || !occluded
 
         screen: modelData
         name: "dock"
@@ -68,15 +68,9 @@ Variants {
         implicitHeight: dockPill.implicitHeight + slideRoom
         readonly property int slideRoom: dockPill.implicitHeight + 24  // fester Wert (kein Tokens auf win-Ebene)
 
-        // Klickbar: bei offenem Kontextmenue das ganze Fenster (Menue + Klick-ausserhalb),
-        // sonst nur Pille + duenner Reveal-Streifen (Rest klick-transparent -> Bar erreichbar).
-        mask: dockPill.contextOpen ? fullMask : pillMask
-
-        Region {
-            id: fullMask
-        }
-        Region {
-            id: pillMask
+        // Klickbar nur: die Pille + ein duenner Reveal-Streifen darunter (statisch,
+        // keine Umschaltung -> kein Binding-Loop). Rest klick-transparent -> Bar erreichbar.
+        mask: Region {
             Region {
                 item: dockPill
             }
@@ -181,17 +175,12 @@ Variants {
                     return;
                 GlobalConfig.dock.pinned = (GlobalConfig.dock.pinned ?? []).filter(a => a !== id);
             }
-
-            // Kontextmenue-State: nur die ID merken (Objekt wird beim Repeater-Neuaufbau ungueltig)
-            property string contextId: ""
-            property real contextX: 0
-            readonly property bool contextOpen: contextId.length > 0
-            function openContext(item) {
-                contextId = item.modelData?.id ?? "";
-                contextX = item.mapToItem(dockPill, item.width / 2, 0).x;
-            }
-            function closeContext() {
-                contextId = "";
+            // Rechtsklick-Toggle: pinnt bzw. loest per ID
+            function togglePin(id) {
+                if (isPinnedId(id))
+                    unpinId(id);
+                else
+                    pinId(id);
             }
 
             // Panel-Look: klebt buendig an der Unterkante (kein Abstand), Slide faehrt
@@ -240,7 +229,7 @@ Variants {
                         MouseArea {
                             anchors.fill: parent
                             acceptedButtons: Qt.RightButton
-                            onClicked: dockPill.openContext(appItem)
+                            onClicked: dockPill.togglePin(appItem.modelData?.id)
                         }
 
                         IconImage {
@@ -263,56 +252,6 @@ Variants {
                     }
                 }
             }
-        }
-
-        // Pin/Unpin-Kontextmenue (ueber der Pille, klappt nach oben auf)
-        StyledRect {
-            id: contextMenu
-
-            readonly property string entryId: dockPill.contextId
-            readonly property bool isPinned: dockPill.isPinnedId(entryId)
-
-            visible: dockPill.contextOpen
-            color: Colours.tPalette.m3surfaceContainerHigh
-            radius: Tokens.rounding.small
-            z: 10
-
-            implicitWidth: ctxLabel.implicitWidth + Tokens.padding.large * 2
-            implicitHeight: ctxLabel.implicitHeight + Tokens.padding.medium * 2
-
-            // Am Icon ausrichten, direkt oberhalb der Pille
-            x: Math.round(dockPill.x + dockPill.contextX - implicitWidth / 2)
-            y: dockPill.y - implicitHeight - Tokens.padding.small
-
-            StateLayer {
-                anchors.fill: parent
-                radius: parent.radius
-                onClicked: {
-                    const id = contextMenu.entryId;
-                    const wasPinned = contextMenu.isPinned;
-                    dockPill.closeContext();   // zuerst schliessen (vermeidet Deadlock beim Repeater-Neuaufbau)
-                    if (wasPinned)
-                        dockPill.unpinId(id);
-                    else
-                        dockPill.pinId(id);
-                }
-            }
-
-            StyledText {
-                id: ctxLabel
-                anchors.centerIn: parent
-                text: contextMenu.isPinned ? Tr.t("Unpin") : Tr.t("Pin")
-                color: Colours.palette.m3onSurface
-            }
-        }
-
-        // Klick ausserhalb schliesst das Kontextmenue
-        MouseArea {
-            anchors.fill: parent
-            visible: dockPill.contextOpen
-            enabled: dockPill.contextOpen
-            z: 9
-            onClicked: dockPill.closeContext()
         }
     }
 }
