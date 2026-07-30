@@ -164,7 +164,7 @@ Variants {
             anchors.bottomMargin: -(implicitHeight) * win.offsetScale
             opacity: 1 - win.offsetScale
 
-            color: Colours.tPalette.m3surfaceContainer
+            color: Colours.tPalette.m3surface
             radius: Tokens.rounding.large
             bottomLeftRadius: 0
             bottomRightRadius: 0
