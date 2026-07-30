@@ -367,7 +367,9 @@ PageBase {
 
     // FileView auf die User-Lua. Wir lesen den aktuellen Inhalt und ersetzen die
     // hl.monitor-Zeile fuer den betreffenden output (oder haengen sie an).
-    FileView {
+    // WICHTIG: FileView ist kein visuelles Item -> als Property deklarieren, nicht als
+    // direktes Kind von PageBase (sonst "Cannot assign FileView to QQuickItem*").
+    readonly property FileView userConfig: FileView {
         id: userConfig
 
         property string content: ""

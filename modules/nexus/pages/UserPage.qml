@@ -23,10 +23,12 @@ PageBase {
     // Anzeigename: default = $USER, editierbar, persistiert als JSON.
     property string displayName: Quickshell.env("USER") ?? ""
 
-    // Persistenz des Anzeigenamens
-    FileView {
-        id: userFile
-
+    // Persistenz des Anzeigenamens.
+    // WICHTIG: FileView/FileDialog sind KEINE visuellen Items -> nicht als direktes
+    // Kind von PageBase (dessen default property Items erwartet), sonst
+    // "Cannot assign object of type FileView to property of type QQuickItem*".
+    // Als benannte Property deklarieren.
+    readonly property FileView userFile: FileView {
         path: `${Paths.home}/.config/caelestia/user.json`
         watchChanges: true
         onFileChanged: reload()
@@ -41,15 +43,13 @@ PageBase {
 
     function saveName(name: string): void {
         root.displayName = name;
-        userFile.setText(JSON.stringify({
+        root.userFile.setText(JSON.stringify({
             displayName: name
         }, null, 2));
     }
 
     // Avatar-Auswahl (kopiert nach ~/.face)
-    FileDialog {
-        id: facePicker
-
+    readonly property FileDialog facePicker: FileDialog {
         title: Tr.t("Select an avatar image")
         filterLabel: Tr.t("Images")
         filters: ["png", "jpg", "jpeg", "webp"]
@@ -125,7 +125,7 @@ PageBase {
 
                     StateLayer {
                         radius: parent.radius
-                        onClicked: facePicker.open()
+                        onClicked: root.facePicker.open()
                     }
 
                     StyledText {
