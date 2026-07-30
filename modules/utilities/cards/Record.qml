@@ -59,14 +59,14 @@ StyledRect {
 
                 StyledText {
                     Layout.fillWidth: true
-                    text: qsTr("Screen Recorder")
+                    text: Tr.t("Screen Recorder")
                     font: Tokens.font.body.medium
                     elide: Text.ElideRight
                 }
 
                 StyledText {
                     Layout.fillWidth: true
-                    text: Recorder.paused ? qsTr("Paused") : Recorder.running ? qsTr("Running...") : qsTr("Ready")
+                    text: Recorder.paused ? Tr.t("Paused") : Recorder.running ? Tr.t("Running...") : Tr.t("Ready")
                     color: Colours.palette.m3onSurfaceVariant
                     font: Tokens.font.body.small
                     elide: Text.ElideRight
@@ -83,26 +83,26 @@ StyledRect {
                 menuItems: [
                     MenuItem {
                         icon: "fullscreen"
-                        text: qsTr("Record fullscreen")
-                        activeText: qsTr("Fullscreen")
+                        text: Tr.t("Record fullscreen")
+                        activeText: Tr.t("Fullscreen")
                         onClicked: Recorder.start()
                     },
                     MenuItem {
                         icon: "screenshot_region"
-                        text: qsTr("Record region")
-                        activeText: qsTr("Region")
+                        text: Tr.t("Record region")
+                        activeText: Tr.t("Region")
                         onClicked: Recorder.start(["-r"])
                     },
                     MenuItem {
                         icon: "select_to_speak"
-                        text: qsTr("Record fullscreen with sound")
-                        activeText: qsTr("Fullscreen")
+                        text: Tr.t("Record fullscreen with sound")
+                        activeText: Tr.t("Fullscreen")
                         onClicked: Recorder.start(["-s"])
                     },
                     MenuItem {
                         icon: "volume_up"
-                        text: qsTr("Record region with sound")
-                        activeText: qsTr("Region")
+                        text: Tr.t("Record region with sound")
+                        activeText: Tr.t("Region")
                         onClicked: Recorder.start(["-sr"])
                     }
                 ]
@@ -236,7 +236,7 @@ StyledRect {
                     else
                         time = `${mins}:${secs}`;
 
-                    return qsTr("Recording for %1").arg(time);
+                    return Tr.t("Recording for %1").arg(time);
                 }
                 font: Tokens.font.body.medium
                 elide: Text.ElideMiddle

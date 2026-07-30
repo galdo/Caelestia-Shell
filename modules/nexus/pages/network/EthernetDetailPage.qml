@@ -95,7 +95,7 @@ PageBase {
         });
     }
 
-    title: root.device?.connection || root.ifaceName || qsTr("Ethernet")
+    title: root.device?.connection || root.ifaceName || Tr.t("Ethernet")
     isSubPage: true
 
     Component.onCompleted: {
@@ -151,7 +151,7 @@ PageBase {
 
                     StyledText {
                         Layout.alignment: Qt.AlignHCenter
-                        text: root.device?.connected ? qsTr("Disconnect") : qsTr("Connect")
+                        text: root.device?.connected ? Tr.t("Disconnect") : Tr.t("Connect")
                         color: connectBtn.onColour
                     }
                 }
@@ -161,51 +161,51 @@ PageBase {
         // ---- Connection info ------------------------------------------------
         SectionHeader {
             first: true
-            text: qsTr("Connection")
+            text: Tr.t("Connection")
         }
 
         InfoRow {
             first: true
             icon: "link"
-            label: qsTr("Status")
-            value: root.device?.connected ? qsTr("Connected") : qsTr("Not connected")
+            label: Tr.t("Status")
+            value: root.device?.connected ? Tr.t("Connected") : Tr.t("Not connected")
         }
 
         InfoRow {
             icon: "settings_ethernet"
-            label: qsTr("Interface")
-            value: root.ifaceName || qsTr("—")
+            label: Tr.t("Interface")
+            value: root.ifaceName || Tr.t("—")
         }
 
         InfoRow {
             icon: "speed"
-            label: qsTr("Speed")
+            label: Tr.t("Speed")
             visible: Nmcli.ethernetSpeed.length > 0
             value: Nmcli.ethernetSpeed
         }
 
         InfoRow {
             icon: "lan"
-            label: qsTr("IP address")
-            value: root.details?.ipAddress || qsTr("—")
+            label: Tr.t("IP address")
+            value: root.details?.ipAddress || Tr.t("—")
         }
 
         InfoRow {
             icon: "router"
-            label: qsTr("Gateway")
-            value: root.details?.gateway || qsTr("—")
+            label: Tr.t("Gateway")
+            value: root.details?.gateway || Tr.t("—")
         }
 
         InfoRow {
             last: true
             icon: "memory"
-            label: qsTr("MAC address")
-            value: root.details?.macAddress || qsTr("—")
+            label: Tr.t("MAC address")
+            value: root.details?.macAddress || Tr.t("—")
         }
 
         // ---- IPv4 ------------------------------------------------------------
         SectionHeader {
-            text: qsTr("IPv4")
+            text: Tr.t("IPv4")
         }
 
         SelectRow {
@@ -214,8 +214,8 @@ PageBase {
             Layout.fillWidth: true
             first: true
             last: root.ipMethod === "auto"
-            label: qsTr("IP assignment")
-            fallbackText: qsTr("Automatic (DHCP)")
+            label: Tr.t("IP assignment")
+            fallbackText: Tr.t("Automatic (DHCP)")
             fallbackIcon: "lan"
 
             menuItems: [autoItem, autoDnsItem, manualItem]
@@ -226,21 +226,21 @@ PageBase {
                 id: autoItem
 
                 icon: "lan"
-                text: qsTr("Automatic (DHCP)")
+                text: Tr.t("Automatic (DHCP)")
             }
 
             MenuItem {
                 id: autoDnsItem
 
                 icon: "dns"
-                text: qsTr("Automatic, DNS only")
+                text: Tr.t("Automatic, DNS only")
             }
 
             MenuItem {
                 id: manualItem
 
                 icon: "edit"
-                text: qsTr("Manual")
+                text: Tr.t("Manual")
             }
         }
 
@@ -255,10 +255,10 @@ PageBase {
 
                 Layout.fillWidth: true
                 visible: root.ipMethod === "manual"
-                placeholderText: qsTr("Address (CIDR)")
+                placeholderText: Tr.t("Address (CIDR)")
                 leadingIcon: "router"
-                supportingText: qsTr("IP and prefix, e.g. 192.168.1.50/24")
-                errorText: qsTr("Enter a valid address in CIDR notation")
+                supportingText: Tr.t("IP and prefix, e.g. 192.168.1.50/24")
+                errorText: Tr.t("Enter a valid address in CIDR notation")
                 inputMethodHints: Qt.ImhNoPredictiveText
                 validate: /^(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\/(?:3[0-2]|[12]?\d)$/
             }
@@ -268,9 +268,9 @@ PageBase {
 
                 Layout.fillWidth: true
                 visible: root.ipMethod === "manual"
-                placeholderText: qsTr("Gateway")
+                placeholderText: Tr.t("Gateway")
                 leadingIcon: "exit_to_app"
-                errorText: qsTr("Enter a valid gateway address")
+                errorText: Tr.t("Enter a valid gateway address")
                 inputMethodHints: Qt.ImhNoPredictiveText
                 validate: /^$|^(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)$/
             }
@@ -279,10 +279,10 @@ PageBase {
                 id: dnsField
 
                 Layout.fillWidth: true
-                placeholderText: qsTr("DNS servers")
+                placeholderText: Tr.t("DNS servers")
                 leadingIcon: "dns"
-                supportingText: qsTr("Comma-separated")
-                errorText: qsTr("Enter valid DNS server addresses")
+                supportingText: Tr.t("Comma-separated")
+                errorText: Tr.t("Enter valid DNS server addresses")
                 inputMethodHints: Qt.ImhNoPredictiveText
                 validate: /^$|^\s*(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)(?:\s*,\s*(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d))*\s*$/
             }
@@ -337,7 +337,7 @@ PageBase {
                     id: applyTextComp
 
                     StyledText {
-                        text: qsTr("Apply")
+                        text: Tr.t("Apply")
                         color: applyBtn.onColour
                         animate: true
                     }

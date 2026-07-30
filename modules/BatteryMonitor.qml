@@ -4,6 +4,7 @@ import Quickshell.Services.UPower
 import Caelestia
 import Caelestia.Config
 import Caelestia.Services
+import qs.services
 
 Scope {
     id: root
@@ -22,14 +23,14 @@ Scope {
         if (root.lastPercentage >= 0) {
             for (const level of root.warnLevels) {
                 if (p <= level.level && root.lastPercentage > level.level) {
-                    Toaster.toast(level.title ?? qsTr("Battery warning"), level.message ?? qsTr("Battery level is low"), level.icon ?? "battery_android_alert", level.critical ? Toast.Error : Toast.Warning);
+                    Toaster.toast(level.title ?? Tr.t("Battery warning"), level.message ?? Tr.t("Battery level is low"), level.icon ?? "battery_android_alert", level.critical ? Toast.Error : Toast.Warning);
                     break;
                 }
             }
         }
 
         if (!hibernateTimer.running && p <= GlobalConfig.general.battery.criticalLevel) {
-            Toaster.toast(qsTr("Hibernating in 5 seconds"), qsTr("Hibernating to prevent data loss"), "battery_android_alert", Toast.Error);
+            Toaster.toast(Tr.t("Hibernating in 5 seconds"), Tr.t("Hibernating to prevent data loss"), "battery_android_alert", Toast.Error);
             hibernateTimer.start();
         }
 
@@ -43,11 +44,11 @@ Scope {
 
             if (UPower.onBattery) {
                 if (GlobalConfig.utilities.toasts.chargingChanged)
-                    Toaster.toast(qsTr("Charger unplugged"), qsTr("Battery is discharging"), "power_off");
+                    Toaster.toast(Tr.t("Charger unplugged"), Tr.t("Battery is discharging"), "power_off");
                 root.handleBatteryWarnings();
             } else {
                 if (GlobalConfig.utilities.toasts.chargingChanged)
-                    Toaster.toast(qsTr("Charger plugged in"), qsTr("Battery is charging"), "power");
+                    Toaster.toast(Tr.t("Charger plugged in"), Tr.t("Battery is charging"), "power");
                 root.lastPercentage = 100;
             }
         }

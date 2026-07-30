@@ -42,9 +42,9 @@ Singleton {
             return;
 
         if (dnd)
-            Toaster.toast(qsTr("Do not disturb enabled"), qsTr("Popup notifications are now disabled"), "do_not_disturb_on");
+            Toaster.toast(Tr.t("Do not disturb enabled"), Tr.t("Popup notifications are now disabled"), "do_not_disturb_on");
         else
-            Toaster.toast(qsTr("Do not disturb disabled"), qsTr("Popup notifications are now enabled"), "do_not_disturb_off");
+            Toaster.toast(Tr.t("Do not disturb disabled"), Tr.t("Popup notifications are now enabled"), "do_not_disturb_off");
     }
 
     onListChanged: {

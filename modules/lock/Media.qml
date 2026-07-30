@@ -56,7 +56,7 @@ StyledClippingRect {
         StyledText {
             Layout.fillWidth: true
             animate: true
-            text: (Players.active?.trackTitle ?? qsTr("Nothing playing")) || qsTr("Unknown track")
+            text: (Players.active?.trackTitle ?? Tr.t("Nothing playing")) || Tr.t("Unknown track")
             color: Colours.palette.m3primary
             horizontalAlignment: Text.AlignHCenter
             font: Tokens.font.title.medium
@@ -66,7 +66,7 @@ StyledClippingRect {
         StyledText {
             Layout.fillWidth: true
             animate: true
-            text: (Players.active?.trackArtist ?? qsTr("Try playing some music!")) || qsTr("Unknown artist")
+            text: (Players.active?.trackArtist ?? Tr.t("Try playing some music!")) || Tr.t("Unknown artist")
             color: Colours.palette.m3onSurfaceVariant
             horizontalAlignment: Text.AlignHCenter
             font: Tokens.font.body.small

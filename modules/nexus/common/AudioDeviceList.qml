@@ -75,7 +75,7 @@ ItemList {
 
             StyledText {
                 Layout.fillWidth: true
-                text: device.modelData?.description || device.modelData?.name || qsTr("Unknown")
+                text: device.modelData?.description || device.modelData?.name || Tr.t("Unknown")
                 font: Tokens.font.body.small
                 elide: Text.ElideRight
             }

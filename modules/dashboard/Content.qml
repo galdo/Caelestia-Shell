@@ -8,6 +8,7 @@ import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.filedialog
+import qs.services
 
 Item {
     id: root
@@ -20,25 +21,25 @@ Item {
             {
                 component: dashComponent,
                 iconName: "dashboard",
-                text: qsTr("Dashboard"),
+                text: Tr.t("Dashboard"),
                 enabled: Config.dashboard.showDashboard
             },
             {
                 component: mediaComponent,
                 iconName: "queue_music",
-                text: qsTr("Media"),
+                text: Tr.t("Media"),
                 enabled: Config.dashboard.showMedia
             },
             {
                 component: performanceComponent,
                 iconName: "speed",
-                text: qsTr("Performance"),
+                text: Tr.t("Performance"),
                 enabled: Config.dashboard.showPerformance
             },
             {
                 component: weatherComponent,
                 iconName: "cloud",
-                text: qsTr("Weather"),
+                text: Tr.t("Weather"),
                 enabled: Config.dashboard.showWeather
             }
         ];

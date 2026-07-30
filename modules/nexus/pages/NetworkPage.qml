@@ -12,7 +12,7 @@ import qs.modules.nexus.common
 PageBase {
     id: root
 
-    title: qsTr("Network")
+    title: Tr.t("Network")
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -59,7 +59,7 @@ PageBase {
         ToggleRow {
             Layout.topMargin: Nmcli.hasAvailableEthernet ? Tokens.spacing.large : 0
             first: true
-            text: qsTr("Wi-Fi")
+            text: Tr.t("Wi-Fi")
             font: Tokens.font.body.medium
             horizontalPadding: Tokens.padding.largeIncreased
             checked: Nmcli.wifiEnabled
@@ -110,7 +110,7 @@ PageBase {
 
                 StyledText {
                     Layout.fillWidth: true
-                    text: qsTr("Show all networks (%1)").arg(Nmcli.networks.length)
+                    text: Tr.t("Show all networks (%1)").arg(Nmcli.networks.length)
                     font: Tokens.font.body.small
                     elide: Text.ElideRight
                 }
@@ -150,7 +150,7 @@ PageBase {
 
                 StyledText {
                     Layout.fillWidth: true
-                    text: qsTr("Saved networks")
+                    text: Tr.t("Saved networks")
                     font: Tokens.font.body.small
                     elide: Text.ElideRight
                 }
@@ -189,7 +189,7 @@ PageBase {
 
                 StyledText {
                     Layout.fillWidth: true
-                    text: qsTr("Add network")
+                    text: Tr.t("Add network")
                     font: Tokens.font.body.small
                     elide: Text.ElideRight
                 }
@@ -201,7 +201,7 @@ PageBase {
             Layout.topMargin: Tokens.spacing.large
             Layout.fillWidth: true
             first: true
-            text: qsTr("VPN")
+            text: Tr.t("VPN")
             font: Tokens.font.body.medium
             horizontalPadding: Tokens.padding.largeIncreased
             checked: VPN.connected
@@ -227,7 +227,7 @@ PageBase {
 
             showList: true
             placeholderIcon: "add_circle"
-            placeholderText: qsTr("No VPN providers configured")
+            placeholderText: Tr.t("No VPN providers configured")
 
             model: ScriptModel {
                 values: [...VPN.providers]
@@ -295,20 +295,20 @@ PageBase {
                             Layout.fillWidth: true
                             text: {
                                 if (!provider.isSelected)
-                                    return qsTr("Tap to select");
+                                    return Tr.t("Tap to select");
                                 if (VPN.connecting)
-                                    return qsTr("Connecting...");
+                                    return Tr.t("Connecting...");
                                 if (VPN.disconnecting)
-                                    return qsTr("Disconnecting...");
+                                    return Tr.t("Disconnecting...");
                                 switch (VPN.status.state) {
                                 case "connected":
-                                    return qsTr("Connected");
+                                    return Tr.t("Connected");
                                 case "needs-auth":
-                                    return VPN.status.reason || qsTr("Authentication required");
+                                    return VPN.status.reason || Tr.t("Authentication required");
                                 case "error":
-                                    return VPN.status.reason || qsTr("An error occurred");
+                                    return VPN.status.reason || Tr.t("An error occurred");
                                 default:
-                                    return qsTr("Selected");
+                                    return Tr.t("Selected");
                                 }
                             }
                             color: {
@@ -355,7 +355,7 @@ PageBase {
 
                                 StyledText {
                                     Layout.alignment: Qt.AlignRight
-                                    text: qsTr("Interface")
+                                    text: Tr.t("Interface")
                                     color: Colours.palette.m3onSurfaceVariant
                                     font: Tokens.font.label.small
                                     elide: Text.ElideRight
@@ -377,7 +377,7 @@ PageBase {
 
                                 StyledText {
                                     Layout.alignment: Qt.AlignRight
-                                    text: qsTr("Current Ping")
+                                    text: Tr.t("Current Ping")
                                     color: Colours.palette.m3onSurfaceVariant
                                     font: Tokens.font.label.small
                                     elide: Text.ElideRight
@@ -397,7 +397,7 @@ PageBase {
                                     }
 
                                     StyledText {
-                                        text: qsTr("%1 ms").arg(VPN.pingMs)
+                                        text: Tr.t("%1 ms").arg(VPN.pingMs)
                                         color: Colours.palette.m3outline
                                         font: Tokens.font.label.small
                                         elide: Text.ElideRight
@@ -451,7 +451,7 @@ PageBase {
 
                 StyledText {
                     Layout.fillWidth: true
-                    text: qsTr("Add provider")
+                    text: Tr.t("Add provider")
                     font: Tokens.font.body.small
                     elide: Text.ElideRight
                 }

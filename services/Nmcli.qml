@@ -4,6 +4,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.services
 
 Singleton {
     id: root
@@ -599,16 +600,16 @@ Singleton {
         switch ((keyMgmt || "").trim().toLowerCase()) {
         case "":
         case "none":
-            return qsTr("Open");
+            return Tr.t("Open");
         case "sae":
             return "WPA3";
         case "wpa-psk":
             return "WPA2";
         case "wpa-eap":
         case "wpa-eap-suite-b-192":
-            return qsTr("Enterprise");
+            return Tr.t("Enterprise");
         case "owe":
-            return qsTr("Enhanced Open");
+            return Tr.t("Enhanced Open");
         case "ieee8021x":
             return "802.1X";
         default:

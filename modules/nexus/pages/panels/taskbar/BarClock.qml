@@ -3,11 +3,12 @@ pragma ComponentBehavior: Bound
 import QtQuick.Layouts
 import Caelestia.Config
 import qs.modules.nexus.common
+import qs.services
 
 PageBase {
     id: root
 
-    title: qsTr("Clock")
+    title: Tr.t("Clock")
     isSubPage: true
 
     ColumnLayout {
@@ -18,20 +19,20 @@ PageBase {
 
         ToggleRow {
             first: true
-            text: qsTr("Background")
+            text: Tr.t("Background")
             checked: Config.bar.clock.background
             onToggled: GlobalConfig.bar.clock.background = checked
         }
 
         ToggleRow {
-            text: qsTr("Show date")
+            text: Tr.t("Show date")
             checked: Config.bar.clock.showDate
             onToggled: GlobalConfig.bar.clock.showDate = checked
         }
 
         ToggleRow {
             last: true
-            text: qsTr("Show icon")
+            text: Tr.t("Show icon")
             checked: Config.bar.clock.showIcon
             onToggled: GlobalConfig.bar.clock.showIcon = checked
         }

@@ -47,12 +47,12 @@ Item {
 
         text: {
             if (root.pam.passwd.active)
-                return qsTr("Loading...");
+                return Tr.t("Loading...");
             if (root.pam.howdy.active)
-                return qsTr("Scanning face...");
+                return Tr.t("Scanning face...");
             if (root.pam.state === Pam.MaxTries)
-                return qsTr("Max tries reached");
-            return qsTr("Enter your password");
+                return Tr.t("Max tries reached");
+            return Tr.t("Enter your password");
         }
         font: placeholder.font
     }

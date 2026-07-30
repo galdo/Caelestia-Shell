@@ -82,7 +82,7 @@ Item {
             Connections {
                 function onCurrentItemChanged(): void {
                     if (root.currentItem)
-                        content.text = qsTr(`"%1" selected`).arg(root.currentItem.modelData.name);
+                        content.text = Tr.t(`"%1" selected`).arg(root.currentItem.modelData.name);
                 }
 
                 target: root

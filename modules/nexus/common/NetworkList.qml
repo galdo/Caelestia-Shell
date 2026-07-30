@@ -25,7 +25,7 @@ ItemList {
 
     showList: Nmcli.wifiEnabled
     placeholderIcon: Nmcli.wifiEnabled ? "wifi_find" : "signal_wifi_off"
-    placeholderText: Nmcli.wifiEnabled ? qsTr("No networks found") : qsTr("Wi-Fi disabled")
+    placeholderText: Nmcli.wifiEnabled ? Tr.t("No networks found") : Tr.t("Wi-Fi disabled")
     extraHeight: Nmcli.scanning ? Tokens.rounding.extraSmall : 0 // Inline so it isn't affected by anim
     list.anchors.top: scanningIndicator.bottom
 
@@ -126,7 +126,7 @@ ItemList {
 
                 StyledText {
                     Layout.fillWidth: true
-                    text: qsTr("Security: %1%2").arg(network.modelData.security).arg(network.modelData.active ? qsTr(" • Connected") : Nmcli.hasSavedProfile(network.modelData.ssid) ? qsTr(" • Saved") : "")
+                    text: Tr.t("Security: %1%2").arg(network.modelData.security).arg(network.modelData.active ? Tr.t(" • Connected") : Nmcli.hasSavedProfile(network.modelData.ssid) ? Tr.t(" • Saved") : "")
                     color: Colours.palette.m3outline
                     font: Tokens.font.label.small
                     elide: Text.ElideRight

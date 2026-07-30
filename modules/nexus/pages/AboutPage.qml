@@ -17,7 +17,7 @@ PageBase {
     property string quickshellVersion
     property string cliVersion
 
-    title: qsTr("About")
+    title: Tr.t("About")
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -85,72 +85,72 @@ PageBase {
 
         // System
         SectionHeader {
-            text: qsTr("System")
+            text: Tr.t("System")
         }
 
         InfoRow {
             first: true
-            label: qsTr("Hostname")
+            label: Tr.t("Hostname")
             value: SysInfo.hostname
         }
 
         InfoRow {
-            label: qsTr("Device")
+            label: Tr.t("Device")
             value: SysInfo.device
         }
 
         InfoRow {
-            label: qsTr("Distro")
+            label: Tr.t("Distro")
             value: SysInfo.osPrettyName || SysInfo.osName
         }
 
         InfoRow {
-            label: qsTr("Kernel")
+            label: Tr.t("Kernel")
             value: SysInfo.kernel
         }
 
         InfoRow {
             last: true
-            label: qsTr("Firmware")
+            label: Tr.t("Firmware")
             value: SysInfo.firmware
         }
 
         // Software
         SectionHeader {
-            text: qsTr("Software")
+            text: Tr.t("Software")
         }
 
         InfoRow {
             first: true
-            label: qsTr("Shell")
+            label: Tr.t("Shell")
             value: CUtils.version || "…"
         }
 
         InfoRow {
-            label: qsTr("CLI")
+            label: Tr.t("CLI")
             value: root.cliVersion || "…"
         }
 
         InfoRow {
-            label: qsTr("Quickshell")
+            label: Tr.t("Quickshell")
             value: root.quickshellVersion || "…"
         }
 
         InfoRow {
             last: true
-            label: qsTr("Qt")
+            label: Tr.t("Qt")
             value: CUtils.qtVersion || "…"
         }
 
         // Plugins
         SectionHeader {
-            text: qsTr("Plugins")
+            text: Tr.t("Plugins")
         }
 
         InfoRow {
             first: true
             last: true
-            label: qsTr("Loaded plugins")
+            label: Tr.t("Loaded plugins")
             value: root.pluginCount.toString()
         }
     }

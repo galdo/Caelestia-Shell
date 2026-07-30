@@ -57,7 +57,7 @@ Item {
                 return Colours.palette.m3onSurface;
             }
 
-            text: root.math.length > 0 ? (Qalculator.result || qsTr("Calculating...")) : qsTr("Type an expression to calculate")
+            text: root.math.length > 0 ? (Qalculator.result || Tr.t("Calculating...")) : Tr.t("Type an expression to calculate")
             elide: Text.ElideLeft
 
             Layout.fillWidth: true
@@ -92,7 +92,7 @@ Item {
                 anchors.right: icon.left
                 anchors.rightMargin: Tokens.spacing.small
 
-                text: qsTr("Open in calculator")
+                text: Tr.t("Open in calculator")
                 color: Colours.palette.m3onTertiary
                 font: Tokens.font.label.medium
 

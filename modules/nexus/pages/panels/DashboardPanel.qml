@@ -4,11 +4,12 @@ import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
 import qs.modules.nexus.common
+import qs.services
 
 PageBase {
     id: root
 
-    title: qsTr("Dashboard")
+    title: Tr.t("Dashboard")
     isSubPage: true
 
     ColumnLayout {
@@ -20,108 +21,108 @@ PageBase {
         // General
         SectionHeader {
             first: true
-            text: qsTr("General")
+            text: Tr.t("General")
         }
 
         ToggleRow {
             first: true
-            text: qsTr("Enabled")
+            text: Tr.t("Enabled")
             checked: Config.dashboard.enabled
             onToggled: GlobalConfig.dashboard.enabled = checked
         }
 
         ToggleRow {
             last: true
-            text: qsTr("Show on hover")
-            subtext: qsTr("Reveal when the cursor reaches the screen edge")
+            text: Tr.t("Show on hover")
+            subtext: Tr.t("Reveal when the cursor reaches the screen edge")
             checked: Config.dashboard.showOnHover
             onToggled: GlobalConfig.dashboard.showOnHover = checked
         }
 
         // Tabs
         SectionHeader {
-            text: qsTr("Tabs")
+            text: Tr.t("Tabs")
         }
 
         ToggleRow {
             first: true
-            text: qsTr("Dashboard")
+            text: Tr.t("Dashboard")
             checked: Config.dashboard.showDashboard
             onToggled: GlobalConfig.dashboard.showDashboard = checked
         }
 
         ToggleRow {
-            text: qsTr("Media")
+            text: Tr.t("Media")
             checked: Config.dashboard.showMedia
             onToggled: GlobalConfig.dashboard.showMedia = checked
         }
 
         ToggleRow {
-            text: qsTr("Performance")
+            text: Tr.t("Performance")
             checked: Config.dashboard.showPerformance
             onToggled: GlobalConfig.dashboard.showPerformance = checked
         }
 
         ToggleRow {
             last: true
-            text: qsTr("Weather")
+            text: Tr.t("Weather")
             checked: Config.dashboard.showWeather
             onToggled: GlobalConfig.dashboard.showWeather = checked
         }
 
         // Performance widgets
         SectionHeader {
-            text: qsTr("Performance widgets")
+            text: Tr.t("Performance widgets")
         }
 
         ToggleRow {
             first: true
-            text: qsTr("Battery")
+            text: Tr.t("Battery")
             checked: Config.dashboard.performance.showBattery
             onToggled: GlobalConfig.dashboard.performance.showBattery = checked
         }
 
         ToggleRow {
-            text: qsTr("GPU")
+            text: Tr.t("GPU")
             checked: Config.dashboard.performance.showGpu
             onToggled: GlobalConfig.dashboard.performance.showGpu = checked
         }
 
         ToggleRow {
-            text: qsTr("CPU")
+            text: Tr.t("CPU")
             checked: Config.dashboard.performance.showCpu
             onToggled: GlobalConfig.dashboard.performance.showCpu = checked
         }
 
         ToggleRow {
-            text: qsTr("Memory")
+            text: Tr.t("Memory")
             checked: Config.dashboard.performance.showMemory
             onToggled: GlobalConfig.dashboard.performance.showMemory = checked
         }
 
         ToggleRow {
-            text: qsTr("Storage")
+            text: Tr.t("Storage")
             checked: Config.dashboard.performance.showStorage
             onToggled: GlobalConfig.dashboard.performance.showStorage = checked
         }
 
         ToggleRow {
             last: true
-            text: qsTr("Network")
+            text: Tr.t("Network")
             checked: Config.dashboard.performance.showNetwork
             onToggled: GlobalConfig.dashboard.performance.showNetwork = checked
         }
 
         // Behaviour
         SectionHeader {
-            text: qsTr("Behaviour")
+            text: Tr.t("Behaviour")
         }
 
         StepperRow {
             first: true
             last: true
-            label: qsTr("Drag threshold")
-            subtext: qsTr("Pixels dragged before the dashboard opens")
+            label: Tr.t("Drag threshold")
+            subtext: Tr.t("Pixels dragged before the dashboard opens")
             value: Config.dashboard.dragThreshold
             from: 0
             to: 200

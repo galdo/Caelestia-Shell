@@ -4,11 +4,12 @@ import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
 import qs.modules.nexus.common
+import qs.services
 
 PageBase {
     id: root
 
-    title: qsTr("Sidebar")
+    title: Tr.t("Sidebar")
     isSubPage: true
 
     ColumnLayout {
@@ -19,20 +20,20 @@ PageBase {
 
         SectionHeader {
             first: true
-            text: qsTr("General")
+            text: Tr.t("General")
         }
 
         ToggleRow {
             first: true
-            text: qsTr("Enabled")
+            text: Tr.t("Enabled")
             checked: Config.sidebar.enabled
             onToggled: GlobalConfig.sidebar.enabled = checked
         }
 
         StepperRow {
             last: true
-            label: qsTr("Drag threshold")
-            subtext: qsTr("Pixels dragged before the sidebar opens")
+            label: Tr.t("Drag threshold")
+            subtext: Tr.t("Pixels dragged before the sidebar opens")
             value: Config.sidebar.dragThreshold
             from: 0
             to: 200

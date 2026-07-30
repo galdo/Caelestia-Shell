@@ -12,7 +12,7 @@ import qs.modules.nexus.common
 PageBase {
     id: root
 
-    title: qsTr("Saved networks")
+    title: Tr.t("Saved networks")
     isSubPage: true
 
     Component.onCompleted: Nmcli.loadSavedConnections(() => {})
@@ -30,7 +30,7 @@ PageBase {
             first: true
             last: true
             placeholderIcon: "wifi_find"
-            placeholderText: qsTr("No saved networks")
+            placeholderText: Tr.t("No saved networks")
 
             model: ScriptModel {
                 values: [...Nmcli.savedConnectionSsids].sort((a, b) => a.localeCompare(b))
@@ -91,11 +91,11 @@ PageBase {
                             text: {
                                 let security;
                                 if (saved.ap)
-                                    security = saved.ap.security || qsTr("Open");
+                                    security = saved.ap.security || Tr.t("Open");
                                 else
-                                    security = Nmcli.securityLabel(Nmcli.savedSecurityFor(saved.modelData)) || qsTr("Unknown");
+                                    security = Nmcli.securityLabel(Nmcli.savedSecurityFor(saved.modelData)) || Tr.t("Unknown");
                                 if (saved.isActive)
-                                    return qsTr("Connected • %1").arg(security);
+                                    return Tr.t("Connected • %1").arg(security);
                                 return security;
                             }
                             color: saved.isActive ? Colours.palette.m3primary : Colours.palette.m3outline

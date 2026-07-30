@@ -16,7 +16,7 @@ import qs.modules.nexus.common
 PageBase {
     id: root
 
-    title: qsTr("Wallpapers")
+    title: Tr.t("Wallpapers")
     isSubPage: true
 
     ColumnLayout {
@@ -32,7 +32,7 @@ PageBase {
 
             IconTextButton {
                 icon: "photo_library"
-                text: qsTr("Browse")
+                text: Tr.t("Browse")
                 font: Tokens.font.body.large
                 isRound: true
                 shapeMorph: true
@@ -43,8 +43,8 @@ PageBase {
                 FileDialog {
                     id: browseDialog
 
-                    title: qsTr("Select an image")
-                    filterLabel: qsTr("Image files")
+                    title: Tr.t("Select an image")
+                    filterLabel: Tr.t("Image files")
                     filters: Images.validImageExtensions
                     onAccepted: path => {
                         Wallpapers.setWallpaper(path);
@@ -55,7 +55,7 @@ PageBase {
 
             IconTextButton {
                 icon: "shuffle"
-                text: qsTr("Random")
+                text: Tr.t("Random")
                 font: Tokens.font.body.large
                 isRound: true
                 shapeMorph: true
@@ -73,7 +73,7 @@ PageBase {
             imgHeight: Math.round(width * 0.3)
             radius: Tokens.rounding.extraLarge
             source: Quickshell.shellPath("assets/wallpaper.webp")
-            text: qsTr("Featured wallpaper")
+            text: Tr.t("Featured wallpaper")
             fillLabel: false
             onClicked: {
                 Wallpapers.setWallpaper(Quickshell.shellPath("assets/wallpaper.webp"));
@@ -83,7 +83,7 @@ PageBase {
 
         StyledText {
             Layout.topMargin: Tokens.spacing.large
-            text: qsTr("Local wallpapers")
+            text: Tr.t("Local wallpapers")
             font: Tokens.font.title.small
         }
 
@@ -177,7 +177,7 @@ PageBase {
 
                     StyledText {
                         Layout.alignment: Qt.AlignHCenter
-                        text: qsTr("No local wallpapers found")
+                        text: Tr.t("No local wallpapers found")
                         color: Colours.palette.m3outline
                         font: Tokens.font.title.small
                     }

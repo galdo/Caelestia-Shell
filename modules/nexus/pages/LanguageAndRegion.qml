@@ -22,14 +22,14 @@ PageBase {
     // Clock format (index 0 = 24-hour, 1 = 12-hour — matches Time.useTwelveHourClock)
     readonly property list<MenuItem> clockItems: [
         MenuItem {
-            text: qsTr("24-hour")
+            text: Tr.t("24-hour")
         },
         MenuItem {
-            text: qsTr("12-hour")
+            text: Tr.t("12-hour")
         }
     ]
 
-    title: qsTr("Language & region")
+    title: Tr.t("Language & region")
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -40,7 +40,7 @@ PageBase {
         // Language
         SectionHeader {
             first: true
-            text: qsTr("Language")
+            text: Tr.t("Language")
         }
 
         // Read-only: the shell follows the system locale (no in-shell translations yet)
@@ -65,14 +65,14 @@ PageBase {
 
                     StyledText {
                         Layout.fillWidth: true
-                        text: qsTr("System language")
+                        text: Tr.t("System language")
                         font: Tokens.font.body.small
                         elide: Text.ElideRight
                     }
 
                     StyledText {
                         Layout.fillWidth: true
-                        text: qsTr("Follows your system locale (%1)").arg(Qt.locale().name)
+                        text: Tr.t("Follows your system locale (%1)").arg(Qt.locale().name)
                         color: Colours.palette.m3outline
                         font: Tokens.font.label.small
                         elide: Text.ElideRight
@@ -89,7 +89,7 @@ PageBase {
 
         // Weather
         SectionHeader {
-            text: qsTr("Weather")
+            text: Tr.t("Weather")
         }
 
         // Placeholder until the map-based location picker lands
@@ -115,7 +115,7 @@ PageBase {
 
                 StyledText {
                     Layout.alignment: Qt.AlignHCenter
-                    text: qsTr("Location picker coming soon")
+                    text: Tr.t("Location picker coming soon")
                     color: Colours.palette.m3outlineVariant
                     font: Tokens.font.title.small
                 }
@@ -124,7 +124,7 @@ PageBase {
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.WordWrap
-                    text: qsTr("Choose your weather location on a map in a future update")
+                    text: Tr.t("Choose your weather location on a map in a future update")
                     color: Colours.palette.m3outlineVariant
                     font: Tokens.font.body.small
                 }
@@ -133,13 +133,13 @@ PageBase {
 
         // Units
         SectionHeader {
-            text: qsTr("Units")
+            text: Tr.t("Units")
         }
 
         SelectRow {
             first: true
-            label: qsTr("Temperature")
-            subtext: qsTr("Units for weather temperatures")
+            label: Tr.t("Temperature")
+            subtext: Tr.t("Units for weather temperatures")
             menuItems: root.tempItems
             active: root.tempItems[GlobalConfig.services.useFahrenheit ? 1 : 0]
             onSelected: item => GlobalConfig.services.useFahrenheit = root.tempItems.indexOf(item) === 1
@@ -147,8 +147,8 @@ PageBase {
 
         SelectRow {
             last: true
-            label: qsTr("System temperatures")
-            subtext: qsTr("Units for CPU and GPU temperatures")
+            label: Tr.t("System temperatures")
+            subtext: Tr.t("Units for CPU and GPU temperatures")
             menuItems: root.tempItems
             active: root.tempItems[GlobalConfig.services.useFahrenheitPerformance ? 1 : 0]
             onSelected: item => GlobalConfig.services.useFahrenheitPerformance = root.tempItems.indexOf(item) === 1
@@ -156,14 +156,14 @@ PageBase {
 
         // Time & date
         SectionHeader {
-            text: qsTr("Time & date")
+            text: Tr.t("Time & date")
         }
 
         SelectRow {
             first: true
             last: true
-            label: qsTr("Clock format")
-            subtext: qsTr("How times are shown across the shell")
+            label: Tr.t("Clock format")
+            subtext: Tr.t("How times are shown across the shell")
             menuItems: root.clockItems
             active: root.clockItems[GlobalConfig.services.useTwelveHourClock ? 1 : 0]
             onSelected: item => GlobalConfig.services.useTwelveHourClock = root.clockItems.indexOf(item) === 1

@@ -49,14 +49,14 @@ Item {
 
                 StyledText {
                     Layout.alignment: Qt.AlignHCenter
-                    text: qsTr("No active client")
+                    text: Tr.t("No active client")
                     color: Colours.palette.m3outline
                     font: Tokens.font.body.builders.large.size(28).weight(Font.Medium).build()
                 }
 
                 StyledText {
                     Layout.alignment: Qt.AlignHCenter
-                    text: qsTr("Try switching to a window")
+                    text: Tr.t("Try switching to a window")
                     color: Colours.palette.m3outline
                     font: Tokens.font.body.large
                 }
@@ -87,10 +87,10 @@ Item {
         text: {
             const client = root.client;
             if (!client)
-                return qsTr("No active client");
+                return Tr.t("No active client");
 
             const mon = client.monitor;
-            return qsTr("%1 on monitor %2 at %3, %4").arg(client.title).arg(mon.name).arg(client.lastIpcObject.at[0]).arg(client.lastIpcObject.at[1]);
+            return Tr.t("%1 on monitor %2 at %3, %4").arg(client.title).arg(mon.name).arg(client.lastIpcObject.at[0]).arg(client.lastIpcObject.at[1]);
         }
     }
 }

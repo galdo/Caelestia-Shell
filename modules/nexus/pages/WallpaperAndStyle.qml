@@ -13,7 +13,7 @@ import qs.modules.nexus.common
 PageBase {
     id: root
 
-    title: qsTr("Wallpaper & style")
+    title: Tr.t("Wallpaper & style")
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -55,7 +55,7 @@ PageBase {
 
                     StyledText {
                         Layout.alignment: Qt.AlignHCenter
-                        text: qsTr("Wallpaper disabled")
+                        text: Tr.t("Wallpaper disabled")
                         color: Colours.palette.m3onSurfaceVariant
                         font: Tokens.font.body.large
                     }
@@ -146,7 +146,7 @@ PageBase {
 
             IconTextButton {
                 icon: "wallpaper"
-                text: qsTr("Wallpapers")
+                text: Tr.t("Wallpapers")
                 font: Tokens.font.body.large
                 isRound: true
                 shapeMorph: true
@@ -159,7 +159,7 @@ PageBase {
 
             IconTextButton {
                 icon: "palette"
-                text: qsTr("Colours")
+                text: Tr.t("Colours")
                 font: Tokens.font.body.large
                 isRound: true
                 shapeMorph: true
@@ -172,7 +172,7 @@ PageBase {
 
         ToggleRow {
             first: true
-            text: qsTr("Display wallpaper")
+            text: Tr.t("Display wallpaper")
             checked: Config.background.wallpaperEnabled
             onToggled: GlobalConfig.background.wallpaperEnabled = checked
         }
@@ -180,8 +180,8 @@ PageBase {
         ToggleRow {
             Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
 
-            text: qsTr("Transparency")
-            subtext: qsTr("Base %1, layers %2").arg(Colours.transparency.base).arg(Colours.transparency.layers)
+            text: Tr.t("Transparency")
+            subtext: Tr.t("Base %1, layers %2").arg(Colours.transparency.base).arg(Colours.transparency.layers)
             checked: Colours.transparency.enabled
             onToggled: GlobalConfig.appearance.transparency.enabled = checked
         }
@@ -190,7 +190,7 @@ PageBase {
             Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
 
             last: true
-            text: qsTr("Dark theme")
+            text: Tr.t("Dark theme")
             checked: !Colours.light
             onToggled: Colours.setMode(checked ? "dark" : "light")
         }

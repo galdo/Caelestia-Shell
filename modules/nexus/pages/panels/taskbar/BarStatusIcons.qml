@@ -3,11 +3,12 @@ pragma ComponentBehavior: Bound
 import QtQuick.Layouts
 import Caelestia.Config
 import qs.modules.nexus.common
+import qs.services
 
 PageBase {
     id: root
 
-    title: qsTr("Status icons")
+    title: Tr.t("Status icons")
     isSubPage: true
 
     ColumnLayout {
@@ -19,69 +20,69 @@ PageBase {
         // Visible icons
         SectionHeader {
             first: true
-            text: qsTr("Visible icons")
+            text: Tr.t("Visible icons")
         }
 
         ToggleRow {
             first: true
-            text: qsTr("Speakers")
+            text: Tr.t("Speakers")
             checked: Config.bar.status.showAudio
             onToggled: GlobalConfig.bar.status.showAudio = checked
         }
 
         ToggleRow {
-            text: qsTr("Microphone")
+            text: Tr.t("Microphone")
             checked: Config.bar.status.showMicrophone
             onToggled: GlobalConfig.bar.status.showMicrophone = checked
         }
 
         ToggleRow {
-            text: qsTr("Keyboard layout")
+            text: Tr.t("Keyboard layout")
             checked: Config.bar.status.showKbLayout
             onToggled: GlobalConfig.bar.status.showKbLayout = checked
         }
 
         ToggleRow {
-            text: qsTr("Network")
+            text: Tr.t("Network")
             checked: Config.bar.status.showNetwork
             onToggled: GlobalConfig.bar.status.showNetwork = checked
         }
 
         ToggleRow {
-            text: qsTr("Wi-Fi")
+            text: Tr.t("Wi-Fi")
             checked: Config.bar.status.showWifi
             onToggled: GlobalConfig.bar.status.showWifi = checked
         }
 
         ToggleRow {
-            text: qsTr("Bluetooth")
+            text: Tr.t("Bluetooth")
             checked: Config.bar.status.showBluetooth
             onToggled: GlobalConfig.bar.status.showBluetooth = checked
         }
 
         ToggleRow {
-            text: qsTr("Battery")
+            text: Tr.t("Battery")
             checked: Config.bar.status.showBattery
             onToggled: GlobalConfig.bar.status.showBattery = checked
         }
 
         ToggleRow {
             last: true
-            text: qsTr("Caps lock")
+            text: Tr.t("Caps lock")
             checked: Config.bar.status.showLockStatus
             onToggled: GlobalConfig.bar.status.showLockStatus = checked
         }
 
         // Behaviour
         SectionHeader {
-            text: qsTr("Behaviour")
+            text: Tr.t("Behaviour")
         }
 
         ToggleRow {
             first: true
             last: true
-            text: qsTr("Popout on hover")
-            subtext: qsTr("Show a details popout when hovering the status icons")
+            text: Tr.t("Popout on hover")
+            subtext: Tr.t("Show a details popout when hovering the status icons")
             checked: Config.bar.popouts.statusIcons
             onToggled: GlobalConfig.bar.popouts.statusIcons = checked
         }

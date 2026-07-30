@@ -19,7 +19,7 @@ ColumnLayout {
 
         Layout.fillWidth: true
 
-        placeholderText: qsTr("Search settings")
+        placeholderText: Tr.t("Search settings")
         font: Tokens.font.body.large
 
         bg.color: Colours.tPalette.m3surfaceContainerLowest

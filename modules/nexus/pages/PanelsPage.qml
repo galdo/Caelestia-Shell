@@ -1,11 +1,12 @@
 import QtQuick.Layouts
 import Caelestia.Config
 import qs.modules.nexus.common
+import qs.services
 
 PageBase {
     id: root
 
-    title: qsTr("Panels")
+    title: Tr.t("Panels")
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -16,37 +17,37 @@ PageBase {
         NavRow {
             first: true
             icon: "dashboard"
-            label: qsTr("Dashboard")
-            status: Config.dashboard.enabled ? qsTr("Enabled") : qsTr("Disabled")
+            label: Tr.t("Dashboard")
+            status: Config.dashboard.enabled ? Tr.t("Enabled") : Tr.t("Disabled")
             onClicked: root.nState.openSubPage(1)
         }
 
         NavRow {
             icon: "dock_to_bottom"
-            label: qsTr("Taskbar")
-            status: Config.bar.persistent ? qsTr("Always visible") : Config.bar.showOnHover ? qsTr("Reveal on hover") : qsTr("Reveal on drag")
+            label: Tr.t("Taskbar")
+            status: Config.bar.persistent ? Tr.t("Always visible") : Config.bar.showOnHover ? Tr.t("Reveal on hover") : Tr.t("Reveal on drag")
             onClicked: root.nState.openSubPage(2)
         }
 
         NavRow {
             icon: "apps"
-            label: qsTr("Launcher")
-            status: Config.launcher.enabled ? qsTr("Enabled") : qsTr("Disabled")
+            label: Tr.t("Launcher")
+            status: Config.launcher.enabled ? Tr.t("Enabled") : Tr.t("Disabled")
             onClicked: root.nState.openSubPage(3)
         }
 
         NavRow {
             icon: "dock_to_right"
-            label: qsTr("Sidebar")
-            status: Config.sidebar.enabled ? qsTr("Enabled") : qsTr("Disabled")
+            label: Tr.t("Sidebar")
+            status: Config.sidebar.enabled ? Tr.t("Enabled") : Tr.t("Disabled")
             onClicked: root.nState.openSubPage(4)
         }
 
         NavRow {
             last: true
             icon: "construction"
-            label: qsTr("Utilities")
-            status: Config.utilities.enabled ? qsTr("Enabled") : qsTr("Disabled")
+            label: Tr.t("Utilities")
+            status: Config.utilities.enabled ? Tr.t("Enabled") : Tr.t("Disabled")
             onClicked: root.nState.openSubPage(5)
         }
     }

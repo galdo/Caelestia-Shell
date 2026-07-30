@@ -33,7 +33,7 @@ Item {
         spacing: Tokens.spacing.medium
 
         StyledText {
-            text: qsTr("Output device")
+            text: Tr.t("Output device")
             font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
         }
 
@@ -54,7 +54,7 @@ Item {
 
         StyledText {
             Layout.topMargin: Tokens.spacing.medium
-            text: qsTr("Input device")
+            text: Tr.t("Input device")
             font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
         }
 
@@ -73,7 +73,7 @@ Item {
 
         StyledText {
             Layout.topMargin: Tokens.spacing.medium
-            text: qsTr("Volume (%1)").arg(Audio.muted ? qsTr("Muted") : `${Math.round(Audio.volume * 100)}%`)
+            text: Tr.t("Volume (%1)").arg(Audio.muted ? Tr.t("Muted") : `${Math.round(Audio.volume * 100)}%`)
             font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
         }
 
@@ -104,7 +104,7 @@ Item {
             inactiveColour: Colours.palette.m3primaryContainer
             inactiveOnColour: Colours.palette.m3onPrimaryContainer
             verticalPadding: Tokens.padding.extraSmall
-            text: qsTr("Open settings")
+            text: Tr.t("Open settings")
             icon: "settings"
 
             onClicked: root.popouts.detachRequested("audio")

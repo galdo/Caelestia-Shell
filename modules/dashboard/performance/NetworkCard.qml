@@ -37,7 +37,7 @@ StyledRect {
             }
 
             StyledText {
-                text: qsTr("Network")
+                text: Tr.t("Network")
                 font: Tokens.font.title.medium
             }
         }
@@ -93,7 +93,7 @@ StyledRect {
             // "Collecting data" placeholder
             StyledText {
                 anchors.centerIn: parent
-                text: qsTr("Collecting data...")
+                text: Tr.t("Collecting data...")
                 font: Tokens.font.body.small
                 color: Colours.palette.m3outline
                 visible: NetworkUsage.downloadBuffer.count < 2
@@ -112,7 +112,7 @@ StyledRect {
             }
 
             StyledText {
-                text: qsTr("Download")
+                text: Tr.t("Download")
                 font: Tokens.font.body.small
                 color: Colours.palette.m3onSurfaceVariant
             }
@@ -143,7 +143,7 @@ StyledRect {
             }
 
             StyledText {
-                text: qsTr("Upload")
+                text: Tr.t("Upload")
                 font: Tokens.font.body.small
                 color: Colours.palette.m3onSurfaceVariant
             }
@@ -174,7 +174,7 @@ StyledRect {
             }
 
             StyledText {
-                text: qsTr("Total")
+                text: Tr.t("Total")
                 font: Tokens.font.body.small
                 color: Colours.palette.m3onSurfaceVariant
             }

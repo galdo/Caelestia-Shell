@@ -60,7 +60,7 @@ Item {
             }
 
             StyledText {
-                text: qsTr("This folder is empty")
+                text: Tr.t("This folder is empty")
                 color: Colours.palette.m3outline
                 font: Tokens.font.body.builders.large.weight(Font.Medium).build()
             }

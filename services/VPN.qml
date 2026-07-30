@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Io
 import Caelestia
 import Caelestia.Config
+import qs.services
 
 Singleton {
     id: root
@@ -269,14 +270,14 @@ Singleton {
         connected = false;
         connectedChanged(); // Force bindings to reeval (mainly for switches)
         if (GlobalConfig.utilities.toasts.vpnChanged)
-            Toaster.toast(qsTr("VPN connection failed"), reason, "vpn_key_alert");
+            Toaster.toast(Tr.t("VPN connection failed"), reason, "vpn_key_alert");
     }
 
     function reportDisconnectFailure(reason: string): void {
         disconnectPending = false;
         connectedChanged(); // Force bindings to reeval (mainly for switches)
         if (GlobalConfig.utilities.toasts.vpnChanged)
-            Toaster.toast(qsTr("VPN disconnection failed"), reason, "vpn_key_alert");
+            Toaster.toast(Tr.t("VPN disconnection failed"), reason, "vpn_key_alert");
     }
 
     function checkStatus(): void {
@@ -526,19 +527,19 @@ Singleton {
 
         switch (statusObj.state) {
         case "connected":
-            Toaster.toast(qsTr("VPN connected"), qsTr("Connected to %1").arg(displayName), "vpn_key");
+            Toaster.toast(Tr.t("VPN connected"), Tr.t("Connected to %1").arg(displayName), "vpn_key");
             break;
         case "disconnected":
-            Toaster.toast(qsTr("VPN disconnected"), qsTr("Disconnected from %1").arg(displayName), "vpn_key_off");
+            Toaster.toast(Tr.t("VPN disconnected"), Tr.t("Disconnected from %1").arg(displayName), "vpn_key_off");
             break;
         case "needs-auth":
             const authMsg = statusObj.reason || "Authentication required";
-            Toaster.toast(qsTr("VPN authentication required"), qsTr("%1: %2").arg(displayName).arg(authMsg), "vpn_lock");
+            Toaster.toast(Tr.t("VPN authentication required"), Tr.t("%1: %2").arg(displayName).arg(authMsg), "vpn_lock");
             break;
         case "error":
             if (status.state === "connected" || status.state === "connecting" || status.state === "needs-auth") {
                 const errMsg = statusObj.reason || "Unknown error";
-                Toaster.toast(qsTr("VPN error"), qsTr("%1: %2").arg(displayName).arg(errMsg), "error");
+                Toaster.toast(Tr.t("VPN error"), Tr.t("%1: %2").arg(displayName).arg(errMsg), "error");
             }
             break;
         }
@@ -763,7 +764,7 @@ Singleton {
 
             if (!root.connectExited) {
                 console.warn(lc, `Failed to start connect command '${command.join(" ")}'`);
-                root.reportConnectFailure(qsTr("Could not start %1. Is it installed?").arg(root.active.displayName));
+                root.reportConnectFailure(Tr.t("Could not start %1. Is it installed?").arg(root.active.displayName));
             }
         }
 
@@ -777,7 +778,7 @@ Singleton {
 
                 if (exitCode !== 0) {
                     console.warn(lc, `Connect command '${command.join(" ")}' failed with exit code`, exitCode);
-                    root.reportConnectFailure(qsTr("Could not connect to %1").arg(root.active.displayName));
+                    root.reportConnectFailure(Tr.t("Could not connect to %1").arg(root.active.displayName));
                     return;
                 }
 
@@ -832,7 +833,7 @@ Singleton {
 
             if (!root.disconnectExited) {
                 console.warn(lc, `Failed to start disconnect command '${command.join(" ")}'`);
-                root.reportDisconnectFailure(qsTr("Could not start %1. Is it installed?").arg(root.active.displayName));
+                root.reportDisconnectFailure(Tr.t("Could not start %1. Is it installed?").arg(root.active.displayName));
             }
         }
 

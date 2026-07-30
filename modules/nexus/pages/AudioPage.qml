@@ -11,7 +11,7 @@ import qs.modules.nexus.common
 PageBase {
     id: root
 
-    title: qsTr("Audio")
+    title: Tr.t("Audio")
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -23,7 +23,7 @@ PageBase {
         SliderRow {
             first: true
             icon: Icons.getVolumeIcon(Audio.volume, Audio.muted)
-            label: qsTr("Output")
+            label: Tr.t("Output")
             valueLabel: Math.round(value * 100) + "%"
             value: Audio.volume
             enabled: !Audio.muted
@@ -31,7 +31,7 @@ PageBase {
         }
 
         ToggleRow {
-            text: qsTr("Muted")
+            text: Tr.t("Muted")
             checked: Audio.muted
             onToggled: Audio.setStreamMuted(Audio.sink, checked)
         }
@@ -41,7 +41,7 @@ PageBase {
             currentId: Audio.sink?.id ?? -1
             iconName: "speaker"
             placeholderIcon: "speaker"
-            placeholderText: qsTr("No output devices")
+            placeholderText: Tr.t("No output devices")
             onSelected: node => Audio.setAudioSink(node)
         }
 
@@ -50,7 +50,7 @@ PageBase {
             Layout.topMargin: Tokens.spacing.large - parent.spacing
             first: true
             icon: Icons.getMicVolumeIcon(Audio.sourceVolume, Audio.sourceMuted)
-            label: qsTr("Input")
+            label: Tr.t("Input")
             valueLabel: Math.round(value * 100) + "%"
             value: Audio.sourceVolume
             enabled: !Audio.sourceMuted
@@ -58,7 +58,7 @@ PageBase {
         }
 
         ToggleRow {
-            text: qsTr("Muted")
+            text: Tr.t("Muted")
             checked: Audio.sourceMuted
             onToggled: Audio.setStreamMuted(Audio.source, checked)
         }
@@ -68,7 +68,7 @@ PageBase {
             currentId: Audio.source?.id ?? -1
             iconName: "mic"
             placeholderIcon: "mic_off"
-            placeholderText: qsTr("No input devices")
+            placeholderText: Tr.t("No input devices")
             onSelected: node => Audio.setAudioSource(node)
         }
 
@@ -104,14 +104,14 @@ PageBase {
 
                     StyledText {
                         Layout.fillWidth: true
-                        text: qsTr("App volumes")
+                        text: Tr.t("App volumes")
                         font: Tokens.font.body.small
                         elide: Text.ElideRight
                     }
 
                     StyledText {
                         Layout.fillWidth: true
-                        text: Audio.streams.length === 0 ? qsTr("No apps playing audio") : Audio.streams.length === 1 ? qsTr("1 app playing audio") : qsTr("%1 apps playing audio").arg(Audio.streams.length)
+                        text: Audio.streams.length === 0 ? Tr.t("No apps playing audio") : Audio.streams.length === 1 ? Tr.t("1 app playing audio") : Tr.t("%1 apps playing audio").arg(Audio.streams.length)
                         color: Colours.palette.m3outline
                         font: Tokens.font.label.small
                         elide: Text.ElideRight
