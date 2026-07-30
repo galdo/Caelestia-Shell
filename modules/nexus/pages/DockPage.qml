@@ -27,30 +27,30 @@ PageBase {
         }
     ]
 
-    // Alle Apps, die noch nicht angeheftet sind (fuer den Hinzufuegen-Dropdown).
-    // Als Variants statt createObject -> saubere Objekt-Lebensdauer.
-    Variants {
-        id: appVariants
-
-        model: {
-            const pinned = GlobalConfig.dock.pinned ?? [];
-            return [...DesktopEntries.applications.values]
-                .filter(a => !pinned.includes(a.id))
-                .sort((a, b) => a.name.localeCompare(b.name));
-        }
-
-        MenuItem {
-            required property var modelData
-            readonly property string appId: modelData.id
-            text: modelData.name
-        }
-    }
-
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
         spacing: Tokens.spacing.extraSmall / 2
+
+        // Alle Apps, die noch nicht angeheftet sind (fuer den Hinzufuegen-Dropdown).
+        // Variants ist kein visuelles Item -> landet in 'data', nicht im Layout.
+        Variants {
+            id: appVariants
+
+            model: {
+                const pinned = GlobalConfig.dock.pinned ?? [];
+                return [...DesktopEntries.applications.values]
+                    .filter(a => !pinned.includes(a.id))
+                    .sort((a, b) => a.name.localeCompare(b.name));
+            }
+
+            MenuItem {
+                required property var modelData
+                readonly property string appId: modelData.id
+                text: modelData.name
+            }
+        }
 
         // Allgemein
         SectionHeader {
