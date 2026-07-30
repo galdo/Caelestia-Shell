@@ -139,7 +139,7 @@ PageBase {
                     readonly property list<MenuItem> modeItems: {
                         const items = [];
                         for (const mode of monSection.modes) {
-                            const it = modeItemComp.createObject(modeSelect, {
+                            const it = root.modeItemComp.createObject(modeSelect, {
                                 objectName: mode.key,
                                 text: mode.label
                             });
@@ -181,7 +181,7 @@ PageBase {
                             const oname = other?.name ?? "?";
                             if (oname === monSection.monName)
                                 continue;
-                            const it = refItemComp.createObject(arrangeRef, {
+                            const it = root.refItemComp.createObject(arrangeRef, {
                                 objectName: oname,
                                 text: oname
                             });
@@ -286,15 +286,15 @@ PageBase {
     }
 
     // MenuItem-Fabriken (dynamische Modi/Referenzen).
-    Component {
-        id: modeItemComp
+    // WICHTIG: Component ist kein visuelles Item -> als Property deklarieren, nicht als
+    // direktes Kind von PageBase (sonst "Cannot assign Component to QQuickItem*").
+    readonly property Component modeItemComp: Component {
         MenuItem {
             required property string objectName
             required property string text
         }
     }
-    Component {
-        id: refItemComp
+    readonly property Component refItemComp: Component {
         MenuItem {
             required property string objectName
             required property string text
