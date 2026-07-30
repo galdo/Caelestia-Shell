@@ -107,7 +107,7 @@ ColumnLayout {
     Dock {
         Layout.alignment: Qt.AlignHCenter
         Layout.topMargin: root.vPadding
-        visible: Config.dock.enabled && Config.dock.position === "top"
+        visible: GlobalConfig.dock.enabled && GlobalConfig.dock.position === "top"
     }
 
     Repeater {
@@ -196,7 +196,7 @@ ColumnLayout {
         objectName: "dock"
         Layout.alignment: Qt.AlignHCenter
         Layout.bottomMargin: root.vPadding
-        visible: Config.dock.enabled && Config.dock.position === "bottom"
+        visible: GlobalConfig.dock.enabled && GlobalConfig.dock.position === "bottom"
     }
 
     component EntryWrapper: Item {

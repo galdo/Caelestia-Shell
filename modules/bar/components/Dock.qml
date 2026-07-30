@@ -25,7 +25,7 @@ Item {
     // Angeheftete App-IDs -> DesktopEntry (heuristisch aufgeloest, null gefiltert)
     readonly property var pinnedEntries: {
         try {
-            return (Config.dock.pinned ?? []).map(id => DesktopEntries.heuristicLookup(id)).filter(e => e);
+            return (GlobalConfig.dock.pinned ?? []).map(id => DesktopEntries.heuristicLookup(id)).filter(e => e);
         } catch (e) {
             console.warn("Dock pinnedEntries error:", e);
             return [];
@@ -35,7 +35,7 @@ Item {
     // Laufende Fenster-Klassen (unique), die NICHT bereits angeheftet sind
     readonly property var pinnedClasses: root.pinnedEntries.map(e => (e.id ?? "").toLowerCase())
     readonly property var runningEntries: {
-        if (!Config.dock.showRunning)
+        if (!GlobalConfig.dock.showRunning)
             return [];
         const out = [];
         try {
@@ -60,7 +60,7 @@ Item {
 
     readonly property var allEntries: root.pinnedEntries.concat(root.runningEntries)
 
-    visible: Config.dock.enabled && root.allEntries.length > 0
+    visible: GlobalConfig.dock.enabled && root.allEntries.length > 0
 
     implicitWidth: Tokens.sizes.bar.innerWidth
     implicitHeight: iconColumn.implicitHeight + Tokens.padding.medium * 2
