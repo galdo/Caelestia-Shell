@@ -12,7 +12,9 @@ class DockConfig : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
 
-    CONFIG_PROPERTY(bool, enabled, true)
+    // Default AUS: Shell laedt garantiert. In den Einstellungen einschalten ->
+    // etwaiger Crash erscheint dann im journalctl (Shell lief bis dahin) mit QML-Zeile.
+    CONFIG_PROPERTY(bool, enabled, false)
     // Angeheftete Apps (DesktopEntry-IDs). Global (nicht per-Monitor).
     CONFIG_GLOBAL_PROPERTY(QStringList, pinned, {})
     // Position in der linken Bar-Spalte: "bottom" (unten, um die untere-linke Ecke)

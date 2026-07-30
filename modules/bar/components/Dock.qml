@@ -19,25 +19,37 @@ StyledRect {
     property color colour: Colours.palette.m3secondary
 
     // Angeheftete App-IDs -> DesktopEntry (heuristisch aufgeloest, null gefiltert)
-    readonly property var pinnedEntries: (Config.dock.pinned ?? []).map(id => DesktopEntries.heuristicLookup(id)).filter(e => e)
+    readonly property var pinnedEntries: {
+        try {
+            return (Config.dock.pinned ?? []).map(id => DesktopEntries.heuristicLookup(id)).filter(e => e);
+        } catch (e) {
+            console.warn("Dock pinnedEntries error:", e);
+            return [];
+        }
+    }
 
     // Laufende Fenster-Klassen (unique), die NICHT bereits angeheftet sind
     readonly property var pinnedClasses: root.pinnedEntries.map(e => (e.id ?? "").toLowerCase())
     readonly property var runningEntries: {
         if (!Config.dock.showRunning)
             return [];
-        const seen = {};
         const out = [];
-        for (const t of Hypr.toplevels.values) {
-            const cls = (t.lastIpcObject?.class ?? "").toLowerCase();
-            if (!cls || seen[cls])
-                continue;
-            seen[cls] = true;
-            if (root.pinnedClasses.includes(cls))
-                continue;
-            const entry = DesktopEntries.heuristicLookup(cls);
-            if (entry)
-                out.push(entry);
+        try {
+            const seen = {};
+            const tls = Hypr.toplevels?.values ?? [];
+            for (const t of tls) {
+                const cls = (t?.lastIpcObject?.class ?? "").toString().toLowerCase();
+                if (!cls || seen[cls])
+                    continue;
+                seen[cls] = true;
+                if (root.pinnedClasses.includes(cls))
+                    continue;
+                const entry = DesktopEntries.heuristicLookup(cls);
+                if (entry)
+                    out.push(entry);
+            }
+        } catch (e) {
+            console.warn("Dock runningEntries error:", e);
         }
         return out;
     }
@@ -55,20 +67,30 @@ StyledRect {
 
     // Ist eine App (per class) gerade offen?
     function isRunning(entryId) {
-        const cls = (entryId ?? "").toLowerCase();
-        return Hypr.toplevels.values.some(t => (t.lastIpcObject?.class ?? "").toLowerCase() === cls);
+        try {
+            const cls = (entryId ?? "").toString().toLowerCase();
+            return (Hypr.toplevels?.values ?? []).some(t => (t?.lastIpcObject?.class ?? "").toString().toLowerCase() === cls);
+        } catch (e) {
+            return false;
+        }
     }
 
     // Klick: laufendes Fenster fokussieren, sonst App starten.
     function activate(entry) {
-        const cls = (entry.id ?? "").toLowerCase();
-        const t = Hypr.toplevels.values.find(w => (w.lastIpcObject?.class ?? "").toLowerCase() === cls);
-        if (t) {
-            const addr = t.address ?? t.lastIpcObject?.address;
-            if (addr)
-                Hypr.dispatch(Hypr.usingLua ? `hl.dsp.focus({ address = "0x${addr}" })` : `focuswindow address:0x${addr}`);
-        } else {
-            Apps.launch(entry);
+        if (!entry)
+            return;
+        try {
+            const cls = (entry.id ?? "").toString().toLowerCase();
+            const t = (Hypr.toplevels?.values ?? []).find(w => (w?.lastIpcObject?.class ?? "").toString().toLowerCase() === cls);
+            if (t) {
+                const addr = t.address ?? t.lastIpcObject?.address;
+                if (addr)
+                    Hypr.dispatch(Hypr.usingLua ? `hl.dsp.focus({ address = "0x${addr}" })` : `focuswindow address:0x${addr}`);
+            } else {
+                Apps.launch(entry);
+            }
+        } catch (e) {
+            console.warn("Dock activate error:", e);
         }
     }
 
