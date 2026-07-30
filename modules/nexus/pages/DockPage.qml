@@ -143,8 +143,12 @@ PageBase {
                     IconButton {
                         icon: "close"
                         onClicked: {
-                            const pinned = GlobalConfig.dock.pinned ?? [];
-                            GlobalConfig.dock.pinned = pinned.filter(a => a !== pinnedRow.modelData);
+                            const pinned = (GlobalConfig.dock.pinned ?? []).slice();
+                            const i = pinnedRow.index;
+                            if (i >= 0 && i < pinned.length) {
+                                pinned.splice(i, 1);
+                                GlobalConfig.dock.pinned = pinned;
+                            }
                         }
                     }
                 }
