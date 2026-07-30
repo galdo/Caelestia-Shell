@@ -192,6 +192,8 @@ ColumnLayout {
 
     // Dock unten (wenn position = "bottom") — zieht sich um die untere-linke Ecke.
     Dock {
+        id: bottomDock
+        objectName: "dock"
         Layout.alignment: Qt.AlignHCenter
         Layout.bottomMargin: root.vPadding
         visible: Config.dock.enabled && Config.dock.position === "bottom"

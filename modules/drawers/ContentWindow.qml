@@ -174,6 +174,34 @@ StyledWindow {
             borderBottom: root.borderThickness - anchors.margins - root.sdfBorderOffset
         }
 
+        // Dock-Blob: verschmilzt mit dem linken Bar-Schenkel zur L-Form.
+        // Liegt am Screen-Rand (x=0) und deckt die Bar-Breite ab. Hoehe aus der
+        // Anzahl angehefteter Apps (dieselbe Formel wie Dock.qml).
+        BlobRect {
+            id: dockBg
+
+            readonly property int iconW: Tokens.sizes.bar.innerWidth
+            readonly property int dockCount: contentItem.Config.dock.pinned?.length ?? 0
+            readonly property int barPad: Tokens.padding.large
+            readonly property int dockHeight: dockCount > 0
+                ? dockCount * iconW + (dockCount - 1) * (Tokens.spacing.medium / 2) + Tokens.padding.medium * 2
+                : 0
+
+            group: blobGroup
+            visible: contentItem.Config.dock.enabled && dockHeight > 0
+
+            x: 0
+            implicitWidth: bar.implicitWidth
+            implicitHeight: dockHeight
+            y: contentItem.Config.dock.position === "top"
+                ? root.borderThickness + barPad
+                : root.height - root.borderThickness - implicitHeight - barPad
+
+            radius: root.borderRounding
+            topRightRadius: contentItem.Config.dock.position === "top" ? root.borderRounding : Tokens.rounding.large
+            bottomRightRadius: contentItem.Config.dock.position === "top" ? Tokens.rounding.large : root.borderRounding
+        }
+
         PanelBg {
             id: dashBg
 
