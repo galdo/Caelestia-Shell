@@ -33,7 +33,9 @@ Variants {
         }
 
         // Verdeckt ein (gekacheltes) Fenster die untere Dock-Zone?
-        readonly property int dockZone: dockPill.implicitHeight + Tokens.padding.large * 2
+        // Feste Zahlenwerte statt Tokens.* — Tokens braucht Screen-Kontext, der auf
+        // Fenster-Ebene (win) nicht gilt (nur in Kind-Items unter contentItem).
+        readonly property int dockZone: dockPill.implicitHeight + 24
         readonly property bool occluded: {
             const tls = monitor?.activeWorkspace?.toplevels?.values ?? [];
             const monY = monitor?.lastIpcObject?.at?.[1] ?? 0;
@@ -64,7 +66,7 @@ Variants {
 
         // Fenster hoeher als die Pille, damit die weggeschobene Pille nicht clippt.
         implicitHeight: dockPill.implicitHeight + slideRoom
-        readonly property int slideRoom: dockPill.implicitHeight + Tokens.padding.large * 2
+        readonly property int slideRoom: dockPill.implicitHeight + 24  // fester Wert (kein Tokens auf win-Ebene)
 
         // Klickbar: bei offenem Kontextmenue das ganze Fenster (Menue + Klick-ausserhalb),
         // sonst nur Pille + duenner Reveal-Streifen (Rest klick-transparent -> Bar erreichbar).
@@ -85,7 +87,7 @@ Variants {
                 height: win.revealZone
             }
         }
-        readonly property int revealZone: Tokens.padding.small
+        readonly property int revealZone: 6   // fester Wert (kein Tokens auf win-Ebene)
         readonly property int revealWidth: Math.max(dockPill.implicitWidth, 200)
 
         // Slide + Fade
