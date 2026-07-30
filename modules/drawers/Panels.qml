@@ -105,8 +105,7 @@ Item {
         screenState: root.screenState
         panels: root
 
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
+        anchors.centerIn: parent
     }
 
     Dashboard.Wrapper {

@@ -28,9 +28,9 @@ Region {
     }
 
     R {
+        // Launcher ist jetzt mittig (kein bottom-Anker) -> Region folgt panel.x/y (Default).
         panel: root.panels.launcher
-        y: root.win.height - height
-        height: panel.height * (1 - root.panels.launcher.offsetScale) + root.borderThickness
+        visible: root.panels.launcher.offsetScale < 1
     }
 
     R {

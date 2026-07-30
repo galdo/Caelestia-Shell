@@ -182,13 +182,6 @@ StyledWindow {
         }
 
         PanelBg {
-            id: launcherBg
-
-            panel: panels.launcher
-            deformAmount: 0.1
-        }
-
-        PanelBg {
             id: sessionBg
 
             panel: panels.sessionWrapper
@@ -272,9 +265,6 @@ StyledWindow {
 
             dashboard.transform: Matrix4x4 {
                 matrix: dashBg.deformMatrix
-            }
-            launcher.transform: Matrix4x4 {
-                matrix: launcherBg.deformMatrix
             }
             session.transform: Matrix4x4 {
                 matrix: sessionBg.deformMatrix

@@ -31,11 +31,12 @@ Item {
             implicitHeight = implicitHeight; // Break binding during close anim
     }
 
+    // Mittig einblenden: fade + leichter scale (statt bottom-morph). Kein Blob mehr.
     visible: offsetScale < 1
-    anchors.bottomMargin: (-implicitHeight - 5) * offsetScale
     implicitHeight: content.implicitHeight
     implicitWidth: content.implicitWidth || 630 // Hard coded fallback for first open
     opacity: 1 - offsetScale
+    scale: 1 - offsetScale * 0.08
 
     Component.onCompleted: Qt.callLater(() => Apps) // Load apps on init
 
@@ -46,8 +47,7 @@ Item {
     Loader {
         id: content
 
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.centerIn: parent
 
         active: root.shouldBeActive || root.visible
 
