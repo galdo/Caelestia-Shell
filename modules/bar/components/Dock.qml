@@ -10,16 +10,13 @@ import qs.services
 import qs.utils
 import qs.modules.launcher.services
 
-// Dock: angeheftete + laufende Apps als vertikale Icon-Spalte in der (linken) Bar.
-// Der HINTERGRUND wird NICHT hier gezeichnet, sondern als BlobRect in ContentWindow.qml,
-// damit er mit dem linken Bar-Schenkel zu einer durchgehenden L-Flaeche verschmilzt.
-// Hier nur die Icons (transparentes Item).
-Item {
+// Dock: angeheftete + laufende Apps als vertikale Icon-Spalte, eigene Pille.
+// Wird als Overlay in ContentWindow positioniert (kein Bar-Fluss).
+StyledRect {
     id: root
 
     property color colour: Colours.palette.m3onSurface
 
-    // Anzahl der Icons — von der Blob-Flaeche (ContentWindow) zur Hoehen-Synchronisation genutzt.
     readonly property int itemCount: root.allEntries.length
 
     // Angeheftete App-IDs -> DesktopEntry (heuristisch aufgeloest, null gefiltert)
@@ -61,6 +58,10 @@ Item {
     readonly property var allEntries: root.pinnedEntries.concat(root.runningEntries)
 
     visible: GlobalConfig.dock.enabled && root.allEntries.length > 0
+
+    color: Colours.tPalette.m3surfaceContainer
+    radius: Tokens.rounding.full
+    clip: true
 
     implicitWidth: Tokens.sizes.bar.innerWidth
     implicitHeight: iconColumn.implicitHeight + Tokens.padding.medium * 2

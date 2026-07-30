@@ -12,7 +12,6 @@ import qs.components
 import qs.components.containers
 import qs.services
 import qs.modules.bar
-import qs.modules.bar.components
 
 StyledWindow {
     id: root
@@ -174,44 +173,6 @@ StyledWindow {
             borderTop: root.borderThickness - anchors.margins - root.sdfBorderOffset
             borderBottom: root.borderThickness - anchors.margins - root.sdfBorderOffset
         }
-
-        // Dock-Blob: verschmilzt mit dem linken Bar-Schenkel zur L-Form.
-        // Liegt am Screen-Rand (x=0) und deckt die Bar-Breite ab. Hoehe aus der
-        // Anzahl angehefteter Apps (dieselbe Formel wie Dock.qml).
-        BlobRect {
-            id: dockBg
-
-            readonly property int iconW: Tokens.sizes.bar.innerWidth
-            // Icon-Anzahl vom Dock-Overlay (pinned + laufende) -> Blob deckt exakt alle Icons.
-            readonly property int dockCount: dockIcons.itemCount
-            readonly property int barPad: Tokens.padding.large
-            readonly property int dockHeight: dockCount > 0
-                ? dockCount * iconW + (dockCount - 1) * (Tokens.spacing.medium / 2) + Tokens.padding.medium * 2
-                : 0
-
-            group: blobGroup
-            visible: GlobalConfig.dock.enabled && dockHeight > 0
-
-            x: 0
-            implicitWidth: bar.implicitWidth
-            implicitHeight: dockHeight
-            y: GlobalConfig.dock.position === "top"
-                ? root.borderThickness + barPad
-                : root.height - root.borderThickness - implicitHeight - barPad
-
-            radius: root.borderRounding
-            topRightRadius: GlobalConfig.dock.position === "top" ? root.borderRounding : Tokens.rounding.large
-            bottomRightRadius: GlobalConfig.dock.position === "top" ? Tokens.rounding.large : root.borderRounding
-        }
-
-        // Dock-Icons als Overlay, deckungsgleich mit dem Blob (kein Bar-Fluss -> keine Verschiebung).
-        Dock {
-            id: dockIcons
-
-            anchors.fill: dockBg
-            visible: dockBg.visible
-        }
-
 
         PanelBg {
             id: dashBg
