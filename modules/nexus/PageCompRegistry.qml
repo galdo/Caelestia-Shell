@@ -155,11 +155,8 @@ QtObject {
                 Component {
                     BarClock {}
                 }
-            }
-        },
-        Component {
-            // Dock
-            StackPage {
+
+                // Dock (Sub-Page von Panels, Index 11 -> PanelsPage NavRow openSubPage(11))
                 Component {
                     DockPage {}
                 }

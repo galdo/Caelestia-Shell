@@ -44,11 +44,18 @@ PageBase {
         }
 
         NavRow {
-            last: true
             icon: "construction"
             label: Tr.t("Utilities")
             status: Config.utilities.enabled ? Tr.t("Enabled") : Tr.t("Disabled")
             onClicked: root.nState.openSubPage(5)
+        }
+
+        NavRow {
+            last: true
+            icon: "apps"
+            label: Tr.t("Dock")
+            status: GlobalConfig.dock.enabled ? Tr.t("Enabled") : Tr.t("Disabled")
+            onClicked: root.nState.openSubPage(11)
         }
     }
 }

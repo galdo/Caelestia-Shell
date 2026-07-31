@@ -74,12 +74,22 @@ PageBase {
         }
 
         SelectRow {
-            last: true
             label: Tr.t("Position")
             subtext: Tr.t("Where the dock attaches to the bar")
             menuItems: root.positionItems
             active: root.positionItems.find(i => i.objectName === GlobalConfig.dock.position) ?? root.positionItems[0]
             onSelected: item => GlobalConfig.dock.position = item.objectName
+        }
+
+        StepperRow {
+            last: true
+            label: Tr.t("Icon size")
+            subtext: Tr.t("Size of the dock icons (px)")
+            from: 24
+            to: 96
+            stepSize: 4
+            value: GlobalConfig.dock.iconSize
+            onMoved: value => GlobalConfig.dock.iconSize = value
         }
 
         // Angeheftete Apps
@@ -138,6 +148,33 @@ PageBase {
                         text: pinnedRow.entry?.name ?? pinnedRow.modelData
                         font: Tokens.font.body.small
                         elide: Text.ElideRight
+                    }
+
+                    // Reihenfolge aendern: hoch/runter (Array-Reihenfolge = Dock-Reihenfolge).
+                    IconButton {
+                        icon: "keyboard_arrow_up"
+                        enabled: pinnedRow.index > 0
+                        onClicked: {
+                            const pinned = (GlobalConfig.dock.pinned ?? []).slice();
+                            const i = pinnedRow.index;
+                            if (i > 0) {
+                                [pinned[i - 1], pinned[i]] = [pinned[i], pinned[i - 1]];
+                                GlobalConfig.dock.pinned = pinned;
+                            }
+                        }
+                    }
+
+                    IconButton {
+                        icon: "keyboard_arrow_down"
+                        enabled: pinnedRow.index < (GlobalConfig.dock.pinned.length - 1)
+                        onClicked: {
+                            const pinned = (GlobalConfig.dock.pinned ?? []).slice();
+                            const i = pinnedRow.index;
+                            if (i >= 0 && i < pinned.length - 1) {
+                                [pinned[i], pinned[i + 1]] = [pinned[i + 1], pinned[i]];
+                                GlobalConfig.dock.pinned = pinned;
+                            }
+                        }
                     }
 
                     IconButton {

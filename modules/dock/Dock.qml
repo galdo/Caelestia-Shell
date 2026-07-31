@@ -219,8 +219,10 @@ Variants {
                         readonly property bool pinned: dockPill.isPinnedId(modelData?.id)
 
                         Layout.alignment: Qt.AlignVCenter
-                        implicitWidth: Tokens.sizes.bar.innerWidth
-                        implicitHeight: Tokens.sizes.bar.innerWidth
+                        // Icon-Groesse aus der Config (1:1). Dock waechst mit (implicitHeight
+                        // der Pille leitet sich aus iconRow ab) -> Icons nie abgeschnitten.
+                        implicitWidth: GlobalConfig.dock.iconSize
+                        implicitHeight: GlobalConfig.dock.iconSize
 
                         StateLayer {
                             anchors.fill: parent
@@ -239,7 +241,7 @@ Variants {
                             anchors.centerIn: parent
                             asynchronous: true
                             source: Quickshell.iconPath(appItem.modelData?.icon, "image-missing")
-                            implicitSize: Math.round(Tokens.sizes.bar.innerWidth * 0.7)
+                            implicitSize: Math.round(GlobalConfig.dock.iconSize * 0.8)
                         }
 
                         // Indikator fuer laufende Apps (unten)
