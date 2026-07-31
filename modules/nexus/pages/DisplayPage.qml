@@ -31,12 +31,12 @@ PageBase {
     readonly property var io: mon?.lastIpcObject ?? ({})
     readonly property string monName: mon?.name ?? (io.name ?? "")
 
-    // Verfuegbare Modi als "WxH@R.RRRHz"-Strings (aus lastIpcObject.availableModes).
-    // Dedupliziert auf "WxH" (nur hoechste Refreshrate je Aufloesung), damit die
-    // Liste kurz bleibt. Absteigend nach Flaeche sortiert.
+    // Verfuegbare Modi als "WxH@R.RRRHz". Dedupliziert auf "WxH" (hoechste Hz je Aufloesung).
+    // Zusaetzlich gaengige Standard-Aufloesungen ergaenzen, die der Monitor NICHT meldet
+    // (virtio-gpu/VM akzeptiert oft beliebige Modi, z.B. 2560x1440) -> mit 60Hz-Fallback.
     readonly property var resList: {
         const raw = io.availableModes ?? [];
-        const best = {};  // "WxH" -> {w,h,hz,mode}
+        const best = {};  // "WxH" -> {w,h,hz,res,mode}
         for (const s of raw) {
             const m = String(s).match(/^(\d+)x(\d+)@([\d.]+)Hz$/);
             if (!m)
@@ -48,6 +48,18 @@ PageBase {
             if (!best[key] || hz > best[key].hz)
                 best[key] = { w, h, hz, res: key, mode: s };
         }
+        // Gaengige Auflösungen ergaenzen, falls nicht gemeldet.
+        const common = [[3840,2160],[2560,1440],[2560,1080],[1920,1200],[1920,1080],[1680,1050],[1600,900],[1440,900],[1366,768],[1280,720]];
+        for (const [w, h] of common) {
+            const key = `${w}x${h}`;
+            if (!best[key])
+                best[key] = { w, h, hz: 60, res: key, mode: `${w}x${h}@60Hz` };
+        }
+        // Aktuelle Auflösung sicher drin.
+        const cw = io.width ?? mon?.width ?? 0;
+        const ch = io.height ?? mon?.height ?? 0;
+        if (cw > 0 && !best[`${cw}x${ch}`])
+            best[`${cw}x${ch}`] = { w: cw, h: ch, hz: 60, res: `${cw}x${ch}`, mode: `${cw}x${ch}@60Hz` };
         return Object.values(best).sort((a, b) => (b.w * b.h) - (a.w * a.h));
     }
 
@@ -168,14 +180,19 @@ PageBase {
         const position = `${io.x ?? 0}x${io.y ?? 0}`;
         const scale = root.selectedScale;
 
-        // 1) Laufzeit
-        Hypr.dispatch(`keyword monitor ${name},${mode},${position},${scale}`);
+        // 1) Laufzeit: hyprctl keyword als Prozess. Funktioniert unabhaengig von Lua-/
+        //    klassischer Config (Hypr.dispatch("keyword ...") greift bei usingLua NICHT).
+        applyProc.command = ["hyprctl", "keyword", "monitor", `${name},${mode},${position},${scale}`];
+        applyProc.running = true;
 
         // 2) Persistenz
         userConfig.writeMonitor(name, mode, position, scale);
 
         Toaster.toast(Tr.t("Display updated"), Tr.t("Applied %1 to %2").arg(mode).arg(name), "monitor");
     }
+
+    // Prozess fuer 'hyprctl keyword monitor ...' (Property, kein PageBase-Kind).
+    readonly property Process applyProc: Process {}
 
     // hypr-user.lua lesen/schreiben (FileView ist kein visuelles Item -> Property!).
     readonly property FileView userConfig: FileView {
