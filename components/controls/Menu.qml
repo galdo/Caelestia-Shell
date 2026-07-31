@@ -84,8 +84,13 @@ MouseArea {
         radius: Tokens.rounding.large
         level: 2
 
+        // Hoehe deckeln: nie hoeher als der verfuegbare Platz im Fenster (minus Puffer),
+        // sonst ragt eine lange Liste (viele Aufloesungen/Apps) unerreichbar aus dem Bild.
+        readonly property real maxHeight: Math.max(120, (root.parent?.height ?? 800) - Tokens.padding.large * 2)
+        readonly property real fullHeight: column.implicitHeight + column.anchors.margins * 2
+
         implicitWidth: Math.max(200, column.implicitWidth + column.anchors.margins * 2)
-        implicitHeight: column.implicitHeight + column.anchors.margins * 2
+        implicitHeight: Math.min(fullHeight, maxHeight)
 
         transform: Scale {
             yScale: root.expanded ? 1 : 0.1
@@ -107,17 +112,32 @@ MouseArea {
             radius: parent.radius
             color: Colours.palette.m3surfaceContainerLow
 
-            ColumnLayout {
-                id: column
+            // Scrollbarer Container: bei kurzer Liste normal, bei langer scrollt der Inhalt.
+            Flickable {
+                id: flick
 
                 anchors.fill: parent
                 anchors.margins: Tokens.padding.extraSmall
-                spacing: 0
+                contentHeight: column.implicitHeight
+                contentWidth: width
+                clip: true
+                interactive: contentHeight > height
+                boundsBehavior: Flickable.StopAtBounds
 
-                Repeater {
-                    id: repeater
+                StyledScrollBar.vertical: StyledScrollBar {
+                    flickable: flick
+                }
 
-                    model: root.items
+                ColumnLayout {
+                    id: column
+
+                    width: flick.width
+                    spacing: 0
+
+                    Repeater {
+                        id: repeater
+
+                        model: root.items
 
                     StyledRect {
                         id: item
@@ -194,5 +214,6 @@ MouseArea {
                 }
             }
         }
+    }
     }
 }
