@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Io
+import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.controls
@@ -175,6 +176,8 @@ PageBase {
         // Vollen Modus-String zur gewaehlten Auflösung finden (hoechste Hz).
         const entry = root.resList.find(e => e.res === root.selectedRes);
         const mode = entry?.mode ?? `${root.selectedRes}@60Hz`;
+        // hyprctl erwartt "WxH@R" ohne "Hz"-Suffix.
+        const hyprMode = mode.replace(/Hz$/, "");
 
         const io = root.io;
         const position = `${io.x ?? 0}x${io.y ?? 0}`;
@@ -182,10 +185,10 @@ PageBase {
 
         // 1) Laufzeit: hyprctl keyword als Prozess. Funktioniert unabhaengig von Lua-/
         //    klassischer Config (Hypr.dispatch("keyword ...") greift bei usingLua NICHT).
-        applyProc.command = ["hyprctl", "keyword", "monitor", `${name},${mode},${position},${scale}`];
+        applyProc.command = ["hyprctl", "keyword", "monitor", `${name},${hyprMode},${position},${scale}`];
         applyProc.running = true;
 
-        // 2) Persistenz
+        // 2) Persistenz (hl.monitor nutzt weiter den vollen mode-String).
         userConfig.writeMonitor(name, mode, position, scale);
 
         Toaster.toast(Tr.t("Display updated"), Tr.t("Applied %1 to %2").arg(mode).arg(name), "monitor");
